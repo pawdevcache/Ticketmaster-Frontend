@@ -1,0 +1,36 @@
+// Thin fetch wrapper around the Go backend. Reads the bearer token from
+// localStorage and unwraps Discovery's { _embedded: { <key>: [...] } } envelope.
+const token = () => localStorage.getItem('token') || '';
+
+async function req(path, { method = 'GET', body, auth } = {}) {
+  const res = await fetch(path, {
+    method,
+    headers: {
+      ...(body && { 'Content-Type': 'application/json' }),
+      ...(auth && { Authorization: `Bearer ${token()}` }),
+    },
+    ...(body && { body: JSON.stringify(body) }),
+  });
+  const data = res.status === 204 ? null : await res.json().catch(() => null);
+  if (!res.ok) throw new Error(data?.error || `Request failed (${res.status})`);
+  return data;
+}
+
+const embedded = (key) => (d) => d?._embedded?.[key] || [];
+
+export const api = {
+  // Discovery
+  events: (params = {}) =>
+    req(`/discovery/v2/events?${new URLSearchParams(params)}`).then(embedded('events')),
+  event: (id) => req(`/discovery/v2/events/${id}`),
+  venue: (id) => req(`/discovery/v2/venues/${id}`),
+  attraction: (id) => req(`/discovery/v2/attractions/${id}`),
+  classifications: () => req('/discovery/v2/classifications').then(embedded('classifications')),
+  // Auth
+  register: (body) => req('/api/register', { method: 'POST', body }),
+  login: (body) => req('/api/login', { method: 'POST', body }),
+  // Bookings (require auth)
+  book: (body) => req('/api/bookings', { method: 'POST', body, auth: true }),
+  bookings: () => req('/api/bookings', { auth: true }),
+  cancelBooking: (id) => req(`/api/bookings/${id}`, { method: 'DELETE', auth: true }),
+};
