@@ -1,9 +1,14 @@
 // Thin fetch wrapper around the Go backend. Reads the bearer token from
 // localStorage and unwraps Discovery's { _embedded: { <key>: [...] } } envelope.
+//
+// BASE is empty in dev so calls stay relative and Vite's proxy forwards them to
+// :8080. In production set VITE_API_URL to the public backend origin.
+const BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+
 const token = () => localStorage.getItem('token') || '';
 
 async function req(path, { method = 'GET', body, auth } = {}) {
-  const res = await fetch(path, {
+  const res = await fetch(BASE + path, {
     method,
     headers: {
       ...(body && { 'Content-Type': 'application/json' }),
