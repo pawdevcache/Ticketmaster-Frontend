@@ -13,14 +13,17 @@ export default function Home() {
   const [keyword, setKeyword] = useState('');
   const [active, setActive] = useState('');   // classificationId filter
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => { api.classifications().then(setClasses).catch(() => {}); }, []);
   useEffect(() => { load(active); }, [active]);
 
   const load = async (classificationId = active, kw = keyword) => {
-    setLoading(true);
+    setLoading(true); setError('');
     try {
       setEvents(await api.events({ ...(kw && { keyword: kw }), ...(classificationId && { classificationId }) }));
+    } catch (e) {
+      setError(e.message);
     } finally {
       setLoading(false);
     }
@@ -85,6 +88,11 @@ export default function Home() {
 
         {loading ? (
           <div className="spinner" />
+        ) : error ? (
+          <div className="empty">
+            <p className="alert err" style={{ display: 'inline-block' }}>⚠️ Couldn't load events.</p>
+            <p className="muted" style={{ marginTop: 12, maxWidth: 520, marginInline: 'auto' }}>{error}</p>
+          </div>
         ) : rest.length ? (
           <div className="grid" style={{ paddingBottom: 20 }}>
             {rest.map((e, i) => <EventCard key={e.id} event={e} cat={classMap[e.classificationId]} index={i} />)}
