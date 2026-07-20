@@ -62,9 +62,10 @@ export default function EventDetail() {
         <section>
           <h2 style={{ marginBottom: 12 }}>About this event</h2>
           <p className="muted">
-            Secure your spot for {event.name}. Prices range from {money(event.priceMin)} to{' '}
-            {money(event.priceMax)}. {left.toLocaleString()} of {(event.ticketsTotal || 0).toLocaleString()}{' '}
-            tickets remaining.
+            {event.description?.trim()
+              ? event.description
+              : `Prices range from ${money(event.priceMin)} to ${money(event.priceMax)}. ` +
+                `${left.toLocaleString()} of ${(event.ticketsTotal || 0).toLocaleString()} tickets remaining.`}
           </p>
 
           {venue && (

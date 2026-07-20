@@ -114,11 +114,6 @@ svg { flex-shrink: 0; vertical-align: middle; }
 }
 .searchbar input { flex: 1; border: none; outline: none; padding: 12px 16px; color: var(--dark); font-size: 15px; }
 
-/* Stats strip */
-.stats { display: flex; gap: 40px; flex-wrap: wrap; margin-top: 44px; }
-.stat b { font-family: var(--head); font-size: 30px; display: block; }
-.stat span { color: #94a3b8; font-size: 14px; }
-
 /* Featured spotlight */
 .feature {
   position: relative; border-radius: var(--radius); overflow: hidden; min-height: 320px;
@@ -192,5 +187,4 @@ svg { flex-shrink: 0; vertical-align: middle; }
 @media (max-width: 820px) {
   .detail-grid { grid-template-columns: 1fr; }
   .book-card { position: static; }
-  .stats { gap: 28px; }
 }

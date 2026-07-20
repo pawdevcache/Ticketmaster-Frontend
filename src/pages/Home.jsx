@@ -38,18 +38,13 @@ export default function Home() {
       <header className="hero">
         <div className="orb a" /><div className="orb b" /><div className="orb c" />
         <div className="container reveal">
-          <span className="badge"><IcoSpark /> Over 10,000 live events worldwide</span>
+          <span className="badge"><IcoSpark /> Discover live events near you</span>
           <h1>Book tickets to the moments <em>you'll never forget.</em></h1>
           <p className="sub">Concerts, sports and theatre — discover, book and manage it all in one place.</p>
           <form className="searchbar" onSubmit={(e) => { e.preventDefault(); load(active, keyword); }}>
             <input placeholder="Search artists, teams, events…" value={keyword} onChange={(e) => setKeyword(e.target.value)} />
             <button className="btn" type="submit"><IcoSearch /> Search</button>
           </form>
-          <div className="stats">
-            <div className="stat"><b>10K+</b><span>Live events</span></div>
-            <div className="stat"><b>500+</b><span>Venues</span></div>
-            <div className="stat"><b>2M+</b><span>Tickets sold</span></div>
-          </div>
         </div>
       </header>
 

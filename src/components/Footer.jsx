@@ -1,12 +1,14 @@
+import { Link } from 'react-router-dom';
 import { IcoTicket } from '../icons';
 
 export default function Footer() {
   return (
     <footer className="footer">
       <div className="container">
-        <div className="logo" style={{ color: '#fff' }}><IcoTicket /> <b>TixWave</b></div>
+        <Link to="/" className="logo" style={{ color: '#fff' }}><IcoTicket /> <b>TixWave</b></Link>
         <div className="row" style={{ gap: 24, flexWrap: 'wrap' }}>
-          <a href="#">Events</a><a href="#">Venues</a><a href="#">Help</a><a href="#">Privacy</a>
+          <Link to="/">Browse events</Link>
+          <Link to="/bookings">My Tickets</Link>
         </div>
         <span>© {new Date().getFullYear()} TixWave. All rights reserved.</span>
       </div>
