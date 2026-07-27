@@ -8,7 +8,6 @@ import Home from './pages/Home';
 import EventDetail from './pages/EventDetail';
 import Auth from './pages/Auth';
 import Bookings from './pages/Bookings';
-import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import './index.css';
 
@@ -25,7 +24,7 @@ const UserLayout = () => (<><Navbar /><Outlet /></>);
 function AdminRoute({ children }) {
   const { admin, ready } = useAdmin();
   if (!ready) return <div className="spinner" />;
-  return admin ? children : <Navigate to="/admin/login" replace />;
+  return admin ? children : <Navigate to="/login" replace />;
 }
 
 createRoot(document.getElementById('root')).render(
@@ -40,7 +39,7 @@ createRoot(document.getElementById('root')).render(
               <Route path="/events/:id" element={<Private><EventDetail /></Private>} />
               <Route path="/bookings" element={<Private><Bookings /></Private>} />
             </Route>
-            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/login" element={<Navigate to="/login" replace />} />
             <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

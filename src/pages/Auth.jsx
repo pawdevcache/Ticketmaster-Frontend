@@ -1,17 +1,22 @@
 import { useState } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
+import { api } from '../api';
 import { useAuth } from '../auth';
+import { useAdmin } from '../adminAuth';
 import { IcoTicket } from '../icons';
 
 export default function Auth() {
-  const { user, login, register } = useAuth();
+  const { user, register, setSession } = useAuth();
+  const { admin, apply: applyAdmin } = useAdmin();
   const nav = useNavigate();
   const [mode, setMode] = useState('login');   // 'login' | 'register'
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [err, setErr] = useState('');
   const [busy, setBusy] = useState(false);
 
-  if (user) return <Navigate to="/" replace />; // already signed in (after hooks)
+  // Already signed in? Send admins to the console, users home.
+  if (admin) return <Navigate to="/admin" replace />;
+  if (user) return <Navigate to="/" replace />;
 
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
 
@@ -19,9 +24,15 @@ export default function Auth() {
     e.preventDefault();
     setErr(''); setBusy(true);
     try {
-      if (mode === 'login') await login(form.email, form.password);
-      else await register(form.name, form.email, form.password);
-      nav('/');
+      if (mode === 'register') {
+        await register(form.name, form.email, form.password);
+        nav('/');
+      } else {
+        // One login for everyone: the role in the response decides the destination.
+        const { token, user: u } = await api.login({ email: form.email, password: form.password });
+        if (u?.role === 'admin') { applyAdmin(token, u); nav('/admin'); }
+        else { setSession(u, token); nav('/'); }
+      }
     } catch (e) {
       setErr(e.message);
     } finally {

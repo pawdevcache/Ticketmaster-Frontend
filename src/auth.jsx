@@ -14,8 +14,8 @@ export function AuthProvider({ children }) {
   };
 
   const login = async (email, password) => {
-    const { token } = await api.login({ email, password });
-    persist({ email }, token);
+    const { token, user } = await api.login({ email, password });
+    persist(user || { email }, token);
   };
 
   const register = async (name, email, password) => {
@@ -29,5 +29,7 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
-  return <Ctx.Provider value={{ user, login, register, logout }}>{children}</Ctx.Provider>;
+  // setSession persists a session from an already-fetched { user, token }, so a
+  // shared login page can decide the role first and then apply the session.
+  return <Ctx.Provider value={{ user, login, register, logout, setSession: persist }}>{children}</Ctx.Provider>;
 }

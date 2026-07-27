@@ -20,11 +20,17 @@ export function AdminProvider({ children }) {
     }
   }, []);
 
-  const login = async (email, password) => {
-    const { token, user } = await adminApi.login(email, password);
+  // apply persists an admin session from an already-fetched token + user. The
+  // shared login page uses this after /api/login reports role === 'admin'.
+  const apply = (token, user) => {
     localStorage.setItem('admin_token', token);
     localStorage.setItem('admin', JSON.stringify(user));
     setAdmin(user);
+  };
+
+  const login = async (email, password) => {
+    const { token, user } = await adminApi.login(email, password);
+    apply(token, user);
   };
 
   const logout = () => {
@@ -33,5 +39,5 @@ export function AdminProvider({ children }) {
     setAdmin(null);
   };
 
-  return <Ctx.Provider value={{ admin, ready, login, logout }}>{children}</Ctx.Provider>;
+  return <Ctx.Provider value={{ admin, ready, login, apply, logout }}>{children}</Ctx.Provider>;
 }
