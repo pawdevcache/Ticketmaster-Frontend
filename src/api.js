@@ -40,6 +40,7 @@ export const api = {
   event: (id) => req(`/discovery/v2/events/${id}`),
   venues: (params = {}) => req(`/discovery/v2/venues?${qs(params)}`).then(embedded('venues')),
   venue: (id) => req(`/discovery/v2/venues/${id}`),
+  attractions: (params = {}) => req(`/discovery/v2/attractions?${qs(params)}`).then(embedded('attractions')),
   attraction: (id) => req(`/discovery/v2/attractions/${id}`),
   classifications: () => req('/discovery/v2/classifications').then(embedded('classifications')),
   // Auth
@@ -55,11 +56,13 @@ export const api = {
 export const adminApi = {
   login: (email, password) => req('/api/admin/login', { method: 'POST', body: { email, password } }),
   me: () => req('/api/admin/me', { admin: true }),
-  // Content management (Discovery writes)
-  createEvent: (body) => req('/discovery/v2/events', { method: 'POST', body, admin: true }),
-  deleteEvent: (id) => req(`/discovery/v2/events/${id}`, { method: 'DELETE', admin: true }),
+  // Content management (Discovery writes) — res is events|venues|attractions|classifications.
+  create: (res, body) => req(`/discovery/v2/${res}`, { method: 'POST', body, admin: true }),
+  update: (res, id, body) => req(`/discovery/v2/${res}/${id}`, { method: 'PUT', body, admin: true }),
+  remove: (res, id) => req(`/discovery/v2/${res}/${id}`, { method: 'DELETE', admin: true }),
   // Users
   users: (params = {}) => req(`/api/admin/users?${qs(params)}`, { admin: true }).then(embedded('users')),
+  updateUser: (id, body) => req(`/api/admin/users/${id}`, { method: 'PUT', body, admin: true }),
   deleteUser: (id) => req(`/api/admin/users/${id}`, { method: 'DELETE', admin: true }),
   // Bookings across all users
   allBookings: (params = {}) => req(`/api/admin/bookings?${qs(params)}`, { admin: true }).then(embedded('bookings')),
