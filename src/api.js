@@ -6,13 +6,15 @@
 const BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
 
 const token = () => localStorage.getItem('token') || '';
+const adminToken = () => localStorage.getItem('admin_token') || '';
 
-async function req(path, { method = 'GET', body, auth } = {}) {
+async function req(path, { method = 'GET', body, auth, admin } = {}) {
+  const bearer = admin ? adminToken() : auth ? token() : '';
   const res = await fetch(BASE + path, {
     method,
     headers: {
       ...(body && { 'Content-Type': 'application/json' }),
-      ...(auth && { Authorization: `Bearer ${token()}` }),
+      ...(bearer && { Authorization: `Bearer ${bearer}` }),
     },
     ...(body && { body: JSON.stringify(body) }),
   });
@@ -30,12 +32,13 @@ async function req(path, { method = 'GET', body, auth } = {}) {
 }
 
 const embedded = (key) => (d) => d?._embedded?.[key] || [];
+const qs = (p) => new URLSearchParams(p).toString();
 
 export const api = {
   // Discovery
-  events: (params = {}) =>
-    req(`/discovery/v2/events?${new URLSearchParams(params)}`).then(embedded('events')),
+  events: (params = {}) => req(`/discovery/v2/events?${qs(params)}`).then(embedded('events')),
   event: (id) => req(`/discovery/v2/events/${id}`),
+  venues: (params = {}) => req(`/discovery/v2/venues?${qs(params)}`).then(embedded('venues')),
   venue: (id) => req(`/discovery/v2/venues/${id}`),
   attraction: (id) => req(`/discovery/v2/attractions/${id}`),
   classifications: () => req('/discovery/v2/classifications').then(embedded('classifications')),
@@ -46,4 +49,20 @@ export const api = {
   book: (body) => req('/api/bookings', { method: 'POST', body, auth: true }),
   bookings: () => req('/api/bookings', { auth: true }),
   cancelBooking: (id) => req(`/api/bookings/${id}`, { method: 'DELETE', auth: true }),
+};
+
+// Admin API — every call carries the separate admin bearer token.
+export const adminApi = {
+  login: (email, password) => req('/api/admin/login', { method: 'POST', body: { email, password } }),
+  me: () => req('/api/admin/me', { admin: true }),
+  // Content management (Discovery writes)
+  createEvent: (body) => req('/discovery/v2/events', { method: 'POST', body, admin: true }),
+  deleteEvent: (id) => req(`/discovery/v2/events/${id}`, { method: 'DELETE', admin: true }),
+  // Users
+  users: (params = {}) => req(`/api/admin/users?${qs(params)}`, { admin: true }).then(embedded('users')),
+  deleteUser: (id) => req(`/api/admin/users/${id}`, { method: 'DELETE', admin: true }),
+  // Bookings across all users
+  allBookings: (params = {}) => req(`/api/admin/bookings?${qs(params)}`, { admin: true }).then(embedded('bookings')),
+  cancelBooking: (id) => req(`/api/admin/bookings/${id}/cancel`, { method: 'POST', admin: true }),
+  deleteBooking: (id) => req(`/api/admin/bookings/${id}`, { method: 'DELETE', admin: true }),
 };

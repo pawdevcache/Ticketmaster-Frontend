@@ -18,6 +18,11 @@ import {
   CgProfile,
   CgShoppingBag,
   CgArrowRight,
+  CgChart,
+  CgList,
+  CgUserList,
+  CgTrash,
+  CgAdd,
 } from 'react-icons/cg';
 
 export {
@@ -34,6 +39,11 @@ export {
   CgProfile as IcoUser,
   CgShoppingBag as IcoTickets,
   CgArrowRight as IcoArrow,
+  CgChart as IcoStats,
+  CgList as IcoEvents,
+  CgUserList as IcoUsers,
+  CgTrash as IcoTrash,
+  CgAdd as IcoAdd,
 };
 
 // Pick an icon component for a classification segment.
