@@ -49,11 +49,9 @@ export default function Bookings() {
           {items.map((b) => {
             const cancelled = b.status === 'cancelled';
             return (
-              <div key={b.id} className="card" style={{ display: 'flex', overflow: 'hidden', opacity: cancelled ? 0.6 : 1 }}>
-                <div
-                  style={{ width: 140, minWidth: 140, backgroundImage: `url(${cover(b.eventId)})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-                />
-                <div style={{ padding: 18, flex: 1 }}>
+              <div key={b.id} className="card booking-card" style={{ opacity: cancelled ? 0.6 : 1 }}>
+                <div className="booking-thumb" style={{ backgroundImage: `url(${cover(b.eventId)})` }} />
+                <div style={{ padding: 18, flex: 1, minWidth: 0 }}>
                   <div className="row" style={{ justifyContent: 'space-between' }}>
                     <h3>{b.event?.name || 'Event'}</h3>
                     <span className={`pill ${cancelled ? 'off' : 'on'}`}>{b.status}</span>

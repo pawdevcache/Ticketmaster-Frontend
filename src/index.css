@@ -201,13 +201,71 @@ textarea.field { resize: vertical; font-family: inherit; }
 .tbl tbody tr:last-child td { border-bottom: none; }
 .tbl tbody tr:hover { background: var(--bg); }
 
+/* Booking row */
+.booking-card { display: flex; overflow: hidden; }
+.booking-thumb { width: 150px; min-width: 150px; background-size: cover; background-position: center; }
+
 /* Footer */
 .footer { background: var(--dark); color: #94a3b8; margin-top: 80px; padding: 48px 0 32px; }
 .footer .container { display: flex; flex-wrap: wrap; gap: 24px; justify-content: space-between; align-items: center; }
 .footer .logo b { font-size: 20px; }
 .footer a:hover { color: #fff; }
 
+/* ---------- Responsive ---------- */
 @media (max-width: 820px) {
   .detail-grid { grid-template-columns: 1fr; }
   .book-card { position: static; }
+  .hero { padding: 72px 0 88px; }
+}
+
+/* Tablets / large phones */
+@media (max-width: 640px) {
+  .container { padding: 0 16px; }
+
+  /* Navbar: tighter, hide the email chip (still shown after tap targets fit) */
+  .nav .container { height: 60px; }
+  .nav .row { gap: 8px; }
+  .logo { font-size: 18px; }
+  .logo svg { font-size: 20px; }
+  .nav .pill, .admin-topbar .pill { display: none; }
+  .btn { padding: 12px 18px; font-size: 14px; }
+  .btn.sm { padding: 8px 12px; font-size: 13px; }
+
+  /* Hero */
+  .hero { padding: 52px 0 68px; }
+  .hero .sub { font-size: 16px; margin-top: 14px; }
+  .hero .badge { margin-bottom: 18px; }
+  .searchbar { margin-top: 22px; }
+
+  /* Featured spotlight: darken from the bottom where the text sits */
+  .feature { min-height: 240px; }
+  .feature .inner { padding: 24px 22px; }
+  .feature::after { background: linear-gradient(to top, rgba(15,23,42,.94), rgba(15,23,42,.35) 72%, transparent); }
+
+  .section-head { margin: 36px 0 18px; }
+  .section-head h2 { font-size: 24px; }
+
+  .grid { gap: 18px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+
+  .banner { height: 260px; }
+  .banner .cap { left: 20px; right: 20px; bottom: 22px; }
+
+  .admin-topbar .container { height: auto; }
+  .admin-topbar .logo { font-size: 16px; }
+
+  .booking-thumb { width: 100px; min-width: 100px; }
+
+  .footer { padding: 36px 0 28px; margin-top: 56px; }
+  .footer .container { justify-content: center; text-align: center; }
+
+  .modal { padding: 22px; }
+}
+
+/* Small phones */
+@media (max-width: 400px) {
+  .searchbar { flex-wrap: wrap; }
+  .searchbar input { min-width: 0; }
+  .searchbar .btn { flex: 1; }
+  .ev-body { padding: 16px; }
+  .price { font-size: 30px; }
 }
