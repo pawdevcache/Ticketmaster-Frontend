@@ -20,19 +20,27 @@ export default function Auth() {
 
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
 
+  const TOO_SHORT = 'Password must be at least 6 characters.';
+  const shortPw = form.password.length < 6;
+
   const submit = async (e) => {
     e.preventDefault();
-    setErr(''); setBusy(true);
+    setErr('');
+    if (mode === 'register') {
+      // New accounts must always meet the 6-character policy.
+      if (shortPw) { setErr(TOO_SHORT); return; }
+      setBusy(true);
+      try { await register(form.name, form.email, form.password); nav('/'); }
+      catch (e) { setErr(e.message); } finally { setBusy(false); }
+      return;
+    }
+    // Login: one form for everyone; the role in the response decides where to go.
+    setBusy(true);
     try {
-      if (mode === 'register') {
-        await register(form.name, form.email, form.password);
-        nav('/');
-      } else {
-        // One login for everyone: the role in the response decides the destination.
-        const { token, user: u } = await api.login({ email: form.email, password: form.password });
-        if (u?.role === 'admin') { applyAdmin(token, u); nav('/admin'); }
-        else { setSession(u, token); nav('/'); }
-      }
+      const { token, user: u } = await api.login({ email: form.email, password: form.password });
+      if (u?.role === 'admin') { applyAdmin(token, u); nav('/admin'); return; } // admins exempt from the length rule
+      if (shortPw) { setErr(TOO_SHORT); return; }                                // regular users must meet it
+      setSession(u, token); nav('/');
     } catch (e) {
       setErr(e.message);
     } finally {
@@ -60,6 +68,9 @@ export default function Auth() {
           )}
           <input className="field" type="email" placeholder="Email" value={form.email} onChange={set('email')} required />
           <input className="field" type="password" placeholder="Password" value={form.password} onChange={set('password')} required />
+          {mode === 'register' && (
+            <span className="muted" style={{ fontSize: 13, marginTop: -6 }}>Use at least 6 characters.</span>
+          )}
           {err && <p className="alert err">{err}</p>}
           <button className="btn" type="submit" disabled={busy}>
             {busy ? 'Please wait…' : mode === 'login' ? 'Sign in' : 'Create account'}
