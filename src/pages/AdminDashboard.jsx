@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api, adminApi } from '../api';
 import { useAdmin } from '../adminAuth';
@@ -275,9 +275,13 @@ function ResourceForm({ label, fields, initial, onSubmit, onClose }) {
     return [f.key, v];
   })));
   const set = (f, val) => setVals((s) => ({ ...s, [f.key]: val }));
+  const [saving, setSaving] = useState(false);
+  const mounted = useRef(true);
+  useEffect(() => () => { mounted.current = false; }, []);
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
+    if (saving) return; // guard against double-submit → duplicate records
     const body = {};
     for (const f of fields) {
       let v = vals[f.key];
@@ -286,7 +290,9 @@ function ResourceForm({ label, fields, initial, onSubmit, onClose }) {
       if (f.key === 'password' && v === '') continue; // omit → backend keeps current
       body[f.key] = v;
     }
-    onSubmit(body);
+    setSaving(true);
+    await onSubmit(body);                       // closes on success, stays open on error
+    if (mounted.current) setSaving(false);      // re-enable only if the form is still open
   };
 
   return (
@@ -297,8 +303,8 @@ function ResourceForm({ label, fields, initial, onSubmit, onClose }) {
           {fields.map((f) => <Field key={f.key} f={f} value={vals[f.key]} onChange={(v) => set(f, v)} />)}
         </div>
         <div className="row" style={{ justifyContent: 'flex-end', gap: 10, marginTop: 18 }}>
-          <button type="button" className="btn ghost" onClick={onClose}>Cancel</button>
-          <button type="submit" className="btn">Save</button>
+          <button type="button" className="btn ghost" onClick={onClose} disabled={saving}>Cancel</button>
+          <button type="submit" className="btn" disabled={saving}>{saving ? 'Saving…' : 'Save'}</button>
         </div>
       </form>
     </div>
