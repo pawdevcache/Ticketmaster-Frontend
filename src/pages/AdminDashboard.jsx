@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api, adminApi } from '../api';
 import { useAdmin } from '../adminAuth';
-import { money, fmtDate } from '../util';
+import { money, fmtDate, cover } from '../util';
 import {
   IcoStats, IcoEvents, IcoVenue, IcoMic, IcoAll, IcoUsers, IcoTickets,
   IcoTrash, IcoAdd, IcoLogout, IcoTicket,
@@ -65,7 +65,12 @@ export default function AdminDashboard() {
     events: {
       label: 'Event', rows: d.events, ...content('events'),
       columns: [
-        { key: 'name', label: 'Event', render: (e) => <strong>{e.name}</strong> },
+        { key: 'name', label: 'Event', render: (e) => (
+          <div className="row" style={{ gap: 12 }}>
+            <span className="tbl-thumb" style={{ backgroundImage: `url(${cover(e.id, 100, 100)})` }} />
+            <strong>{e.name}</strong>
+          </div>
+        ) },
         { key: 'date', label: 'Date', render: (e) => fmtDate(e.date).full },
         { key: 'price', label: 'Price', render: (e) => money(e.priceMin) + '+' },
         { key: 'sold', label: 'Sold', render: (e) => `${e.ticketsSold || 0}/${e.ticketsTotal || 0}` },
