@@ -25,6 +25,10 @@ export default function AdminDashboard() {
   const [d, setD] = useState({ events: [], venues: [], attractions: [], classes: [], users: [], bookings: [] });
   const [loading, setLoading] = useState(true);
   const [msg, setMsg] = useState(null);
+  const [confirm, setConfirm] = useState(null); // { message, run, label }
+
+  // Open a styled confirmation dialog for a destructive action.
+  const ask = (message, run, label = 'Yes, delete') => setConfirm({ message, run, label });
 
   const loadAll = async () => {
     setLoading(true);
@@ -183,7 +187,7 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            {CONFIG[tab] && <Resource key={tab} {...CONFIG[tab]} act={act} />}
+            {CONFIG[tab] && <Resource key={tab} {...CONFIG[tab]} act={act} ask={ask} />}
 
             {tab === 'bookings' && (
               <>
@@ -198,8 +202,8 @@ export default function AdminDashboard() {
                       <td><span className={`pill ${b.status === 'confirmed' ? 'on' : 'off'}`}>{b.status}</span></td>
                       <td className="row" style={{ gap: 8, justifyContent: 'flex-end' }}>
                         {b.status === 'confirmed' &&
-                          <button className="btn sm ghost" onClick={() => act(() => adminApi.cancelBooking(b.id), 'Booking cancelled')}>Cancel</button>}
-                        <DelBtn onClick={() => window.confirm('Delete this booking?') && act(() => adminApi.deleteBooking(b.id), 'Booking deleted')} />
+                          <button className="btn sm ghost" onClick={() => ask('Cancel this booking? The tickets will be returned to the event.', () => act(() => adminApi.cancelBooking(b.id), 'Booking cancelled'), 'Yes, cancel')}>Cancel</button>}
+                        <DelBtn onClick={() => ask('Do you want to delete this booking?', () => act(() => adminApi.deleteBooking(b.id), 'Booking deleted'))} />
                       </td>
                     </tr>
                   ))}
@@ -209,13 +213,27 @@ export default function AdminDashboard() {
           </>
         )}
       </main>
+
+      {confirm && (
+        <div className="modal-backdrop" onClick={() => setConfirm(null)}>
+          <div className="card modal" style={{ maxWidth: 420, textAlign: 'center' }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ fontSize: 34, marginBottom: 8 }}>⚠️</div>
+            <h3 style={{ marginBottom: 8 }}>Are you sure?</h3>
+            <p className="muted" style={{ marginBottom: 22 }}>{confirm.message}</p>
+            <div className="row" style={{ justifyContent: 'center', gap: 10 }}>
+              <button className="btn ghost" onClick={() => setConfirm(null)}>Cancel</button>
+              <button className="btn danger" onClick={() => { const run = confirm.run; setConfirm(null); run(); }}>{confirm.label}</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
 // --- generic resource manager: list + create/edit modal + delete ---
 
-function Resource({ label, rows, columns, fields, onCreate, onUpdate, onDelete, act, disableCreate, canDelete = () => true }) {
+function Resource({ label, rows, columns, fields, onCreate, onUpdate, onDelete, act, ask, disableCreate, canDelete = () => true }) {
   const [editing, setEditing] = useState(null); // null=closed, {}=new, item=edit
 
   const save = async (body) => {
@@ -225,7 +243,7 @@ function Resource({ label, rows, columns, fields, onCreate, onUpdate, onDelete, 
     );
     if (ok) setEditing(null);
   };
-  const del = (item) => window.confirm(`Delete this ${label.toLowerCase()}?`) && act(() => onDelete(item), `${label} deleted`);
+  const del = (item) => ask(`Do you want to delete this ${label.toLowerCase()}?`, () => act(() => onDelete(item), `${label} deleted`));
 
   return (
     <>
