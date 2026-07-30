@@ -9,7 +9,9 @@ import { IcoDate, IcoTickets } from '../icons';
 export default function Bookings() {
   const { user } = useAuth();
   const nav = useNavigate();
-  const [items, setItems] = useState(null); // null = loading
+  const [items, setItems] = useState(null);  // null = loading
+  const [confirm, setConfirm] = useState(null); // booking pending cancellation
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     if (!user) { nav('/login'); return; }
@@ -25,9 +27,11 @@ export default function Bookings() {
     setItems(withEvents);
   };
 
-  const cancel = async (id) => {
-    await api.cancelBooking(id);
-    load();
+  // Cancel only after the user confirms in the dialog.
+  const doCancel = async () => {
+    setBusy(true);
+    try { await api.cancelBooking(confirm.id); await load(); setConfirm(null); }
+    finally { setBusy(false); }
   };
 
   if (items === null) return <div className="spinner" />;
@@ -60,7 +64,7 @@ export default function Bookings() {
                   <div className="row" style={{ justifyContent: 'space-between', marginTop: 12 }}>
                     <span className="muted">{b.quantity} ticket(s) · <strong>{money(b.total)}</strong></span>
                     {!cancelled && (
-                      <button className="btn sm danger" onClick={() => cancel(b.id)}>Cancel</button>
+                      <button className="btn sm danger" onClick={() => setConfirm(b)}>Cancel</button>
                     )}
                   </div>
                 </div>
@@ -70,6 +74,26 @@ export default function Bookings() {
         </div>
       )}
     </main>
+
+    {confirm && (
+      <div className="modal-backdrop" onClick={() => !busy && setConfirm(null)}>
+        <div className="card modal" style={{ maxWidth: 420, textAlign: 'center' }} onClick={(e) => e.stopPropagation()}>
+          <div style={{ fontSize: 34, marginBottom: 8 }}>🎟️</div>
+          <h3 style={{ marginBottom: 8 }}>Cancel this ticket?</h3>
+          <p className="muted" style={{ marginBottom: 22 }}>
+            Do you want to cancel your booking for <strong>{confirm.event?.name || 'this event'}</strong>?
+            This releases your {confirm.quantity} ticket(s) and can’t be undone.
+          </p>
+          <div className="row" style={{ justifyContent: 'center', gap: 10 }}>
+            <button className="btn ghost" onClick={() => setConfirm(null)} disabled={busy}>Keep ticket</button>
+            <button className="btn danger" onClick={doCancel} disabled={busy}>
+              {busy ? 'Cancelling…' : 'Yes, cancel'}
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+
     <Footer />
     </>
   );
