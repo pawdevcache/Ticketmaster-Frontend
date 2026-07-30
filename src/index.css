@@ -166,6 +166,8 @@ svg { flex-shrink: 0; vertical-align: middle; }
 .tabs { display: flex; background: var(--bg); border-radius: 12px; padding: 5px; margin-bottom: 24px; }
 .tabs button { flex: 1; padding: 11px; border: none; background: none; border-radius: 9px; font-weight: 600; cursor: pointer; color: var(--muted); transition: all .15s; }
 .tabs button.active { background: #fff; color: var(--dark); box-shadow: var(--shadow); }
+.linkbtn { background: none; border: none; color: var(--primary); font-weight: 600; font-size: 14px; cursor: pointer; padding: 4px; }
+.linkbtn:hover { text-decoration: underline; }
 
 /* Feedback */
 .alert { padding: 12px 16px; border-radius: 12px; font-weight: 500; font-size: 14px; }

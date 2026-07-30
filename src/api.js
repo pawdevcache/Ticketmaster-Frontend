@@ -46,6 +46,7 @@ export const api = {
   // Auth
   register: (body) => req('/api/register', { method: 'POST', body }),
   login: (body) => req('/api/login', { method: 'POST', body }),
+  resetPassword: (email, newPassword) => req('/api/reset-password', { method: 'POST', body: { email, newPassword } }),
   // Bookings (require auth)
   book: (body) => req('/api/bookings', { method: 'POST', body, auth: true }),
   bookings: () => req('/api/bookings', { auth: true }),
