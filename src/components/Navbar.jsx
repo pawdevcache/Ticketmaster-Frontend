@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import ThemeToggle from './ThemeToggle';
 import { IcoTickets, IcoUser, IcoLogout, IcoLogin, IcoTicket } from '../utils/icons';
 
 export default function Navbar() {
@@ -11,6 +12,7 @@ export default function Navbar() {
       <div className="container">
         <Link to="/" className="logo"><IcoTicket style={{ color: 'var(--primary)' }} /> <b>TixWave</b></Link>
         <div className="row">
+          <ThemeToggle />
           {user ? (
             <>
               <Link to="/bookings" className="btn ghost sm"><IcoTickets /> My Tickets</Link>

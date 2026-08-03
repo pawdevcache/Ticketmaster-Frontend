@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api, adminApi } from '../services/api';
 import { useAdmin } from '../context/AdminContext';
+import ThemeToggle from '../components/ThemeToggle';
 import { money, fmtDate, cover } from '../utils/format';
 import {
   IcoStats, IcoEvents, IcoVenue, IcoMic, IcoAll, IcoUsers, IcoTickets,
@@ -167,6 +168,7 @@ export default function AdminDashboard() {
         <div className="container row" style={{ justifyContent: 'space-between' }}>
           <span className="logo" style={{ color: '#fff' }}><IcoTicket /> <b>TixWave</b> Admin</span>
           <div className="row">
+            <ThemeToggle light />
             <span className="pill">{admin?.email}</span>
             <button className="btn sm danger" onClick={() => { logout(); nav('/admin/login'); }}><IcoLogout /> Logout</button>
           </div>

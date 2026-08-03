@@ -23,6 +23,8 @@ import {
   CgUserList,
   CgTrash,
   CgAdd,
+  CgSun,
+  CgMoon,
 } from 'react-icons/cg';
 
 export {
@@ -44,6 +46,8 @@ export {
   CgUserList as IcoUsers,
   CgTrash as IcoTrash,
   CgAdd as IcoAdd,
+  CgSun as IcoSun,
+  CgMoon as IcoMoon,
 };
 
 // Pick an icon component for a classification segment.
