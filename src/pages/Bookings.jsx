@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { QRCodeSVG } from 'qrcode.react';
 import { api } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import Footer from '../components/Footer';
-import { cover, money, fmtDate } from '../utils/format';
+import { cover, money, fmtDate, addToCalendar } from '../utils/format';
 import { IcoDate, IcoTickets } from '../utils/icons';
 
 export default function Bookings() {
@@ -11,6 +12,7 @@ export default function Bookings() {
   const nav = useNavigate();
   const [items, setItems] = useState(null);  // null = loading
   const [confirm, setConfirm] = useState(null); // booking pending cancellation
+  const [ticket, setTicket] = useState(null);   // booking shown as an e-ticket
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -61,10 +63,13 @@ export default function Bookings() {
                     <span className={`pill ${cancelled ? 'off' : 'on'}`}>{b.status}</span>
                   </div>
                   {b.event && <p className="muted" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><IcoDate /> {fmtDate(b.event.date).full}</p>}
-                  <div className="row" style={{ justifyContent: 'space-between', marginTop: 12 }}>
+                  <div className="row" style={{ justifyContent: 'space-between', marginTop: 12, flexWrap: 'wrap', gap: 8 }}>
                     <span className="muted">{b.quantity} ticket(s) · <strong>{money(b.total)}</strong></span>
                     {!cancelled && (
-                      <button className="btn sm danger" onClick={() => setConfirm(b)}>Cancel</button>
+                      <div className="row" style={{ gap: 8 }}>
+                        <button className="btn sm ghost" onClick={() => setTicket(b)}>View ticket</button>
+                        <button className="btn sm danger" onClick={() => setConfirm(b)}>Cancel</button>
+                      </div>
                     )}
                   </div>
                 </div>
@@ -89,6 +94,36 @@ export default function Bookings() {
             <button className="btn danger" onClick={doCancel} disabled={busy}>
               {busy ? 'Cancelling…' : 'Yes, cancel'}
             </button>
+          </div>
+        </div>
+      </div>
+    )}
+
+    {ticket && (
+      <div className="modal-backdrop" onClick={() => setTicket(null)}>
+        <div className="card eticket" onClick={(e) => e.stopPropagation()}>
+          <div className="eticket-head">
+            <span className="tag">E-Ticket</span>
+            <h3>{ticket.event?.name || 'Event'}</h3>
+            {ticket.event && (
+              <p style={{ display: 'inline-flex', alignItems: 'center', gap: 6, opacity: .9 }}>
+                <IcoDate /> {fmtDate(ticket.event.date).full}
+              </p>
+            )}
+          </div>
+          <div className="eticket-body">
+            <div className="eticket-qr">
+              <QRCodeSVG value={`TIXWAVE:${ticket.id}`} size={172} level="M" />
+            </div>
+            <div className="eticket-meta">
+              <div><span className="muted">Tickets</span><strong>{ticket.quantity}</strong></div>
+              <div><span className="muted">Total</span><strong>{money(ticket.total)}</strong></div>
+              <div><span className="muted">Ref</span><strong>{ticket.id.slice(-8).toUpperCase()}</strong></div>
+            </div>
+            <div className="row" style={{ gap: 10, marginTop: 4 }}>
+              <button className="btn ghost" style={{ flex: 1 }} disabled={!ticket.event} onClick={() => addToCalendar(ticket.event, ticket.quantity)}>Add to calendar</button>
+              <button className="btn" style={{ flex: 1 }} onClick={() => setTicket(null)}>Done</button>
+            </div>
           </div>
         </div>
       </div>

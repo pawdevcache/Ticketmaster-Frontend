@@ -51,7 +51,17 @@ export default function AdminDashboard() {
   };
 
   const nameOf = (list, id, key = 'name') => list.find((x) => x.id === id)?.[key] || '—';
-  const revenue = d.bookings.filter((b) => b.status === 'confirmed').reduce((s, b) => s + b.total, 0);
+  const confirmed = d.bookings.filter((b) => b.status === 'confirmed');
+  const revenue = confirmed.reduce((s, b) => s + b.total, 0);
+
+  // Analytics: revenue per event and tickets sold per category (confirmed only).
+  const revByEvent = d.events
+    .map((e) => ({ label: e.name, value: confirmed.filter((b) => b.eventId === e.id).reduce((s, b) => s + b.total, 0) }))
+    .filter((x) => x.value > 0).sort((a, b) => b.value - a.value).slice(0, 6);
+  const catOf = Object.fromEntries(d.events.map((e) => [e.id, e.classificationId]));
+  const ticketsByCat = d.classes
+    .map((c) => ({ label: `${c.segment} · ${c.genre}`, value: confirmed.filter((b) => catOf[b.eventId] === c.id).reduce((s, b) => s + b.quantity, 0) }))
+    .filter((x) => x.value > 0).sort((a, b) => b.value - a.value);
 
   // Dropdown option lists derived from loaded data.
   const venueOpts = d.venues.map((v) => ({ value: v.id, label: v.name }));
@@ -177,14 +187,28 @@ export default function AdminDashboard() {
         {loading ? <div className="spinner" /> : (
           <>
             {tab === 'overview' && (
-              <div className="stat-grid">
-                <Stat icon={IcoEvents} label="Events" value={d.events.length} />
-                <Stat icon={IcoVenue} label="Venues" value={d.venues.length} />
-                <Stat icon={IcoMic} label="Attractions" value={d.attractions.length} />
-                <Stat icon={IcoUsers} label="Users" value={d.users.length} />
-                <Stat icon={IcoTickets} label="Bookings" value={d.bookings.length} />
-                <Stat icon={IcoStats} label="Revenue" value={money(revenue)} />
-              </div>
+              <>
+                <div className="stat-grid">
+                  <Stat icon={IcoEvents} label="Events" value={d.events.length} />
+                  <Stat icon={IcoVenue} label="Venues" value={d.venues.length} />
+                  <Stat icon={IcoMic} label="Attractions" value={d.attractions.length} />
+                  <Stat icon={IcoUsers} label="Users" value={d.users.length} />
+                  <Stat icon={IcoTickets} label="Bookings" value={d.bookings.length} />
+                  <Stat icon={IcoStats} label="Revenue" value={money(revenue)} />
+                </div>
+                <div className="chart-grid">
+                  <div className="card chart-card">
+                    <h3>Revenue by event</h3>
+                    {revByEvent.length ? <BarList data={revByEvent} format={money} />
+                      : <p className="muted">No confirmed bookings yet.</p>}
+                  </div>
+                  <div className="card chart-card">
+                    <h3>Tickets sold by category</h3>
+                    {ticketsByCat.length ? <BarList data={ticketsByCat} />
+                      : <p className="muted">No confirmed bookings yet.</p>}
+                  </div>
+                </div>
+              </>
             )}
 
             {CONFIG[tab] && <Resource key={tab} {...CONFIG[tab]} act={act} ask={ask} />}
@@ -345,6 +369,22 @@ const Stat = ({ icon: Icon, label, value }) => (
     <div><b>{value}</b><span>{label}</span></div>
   </div>
 );
+
+// Single-series horizontal bars with direct value labels — magnitude by category.
+const BarList = ({ data, format = (v) => v }) => {
+  const max = Math.max(1, ...data.map((d) => d.value));
+  return (
+    <div className="barlist">
+      {data.map((d) => (
+        <div className="barrow" key={d.label} title={`${d.label}: ${format(d.value)}`}>
+          <span className="barlabel">{d.label}</span>
+          <span className="bartrack"><span className="barfill" style={{ width: `${(d.value / max) * 100}%` }} /></span>
+          <span className="barval">{format(d.value)}</span>
+        </div>
+      ))}
+    </div>
+  );
+};
 
 const Table = ({ head, children }) => (
   <div className="card" style={{ overflowX: 'auto' }}>

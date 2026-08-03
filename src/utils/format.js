@@ -15,6 +15,26 @@ export const fmtDate = (iso) => {
   };
 };
 
+// Build an .ics file for an event and trigger a download ("Add to calendar").
+export function addToCalendar(event, quantity = 1) {
+  if (!event?.date) return;
+  const stamp = (d) => new Date(d).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  const start = stamp(event.date);
+  const end = stamp(new Date(new Date(event.date).getTime() + 2 * 60 * 60 * 1000)); // +2h
+  const ics = [
+    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//TixWave//EN', 'BEGIN:VEVENT',
+    `UID:${event.id || start}@tixwave`, `DTSTAMP:${start}`, `DTSTART:${start}`, `DTEND:${end}`,
+    `SUMMARY:${event.name || 'Event'}`, `DESCRIPTION:${quantity} ticket(s) booked on TixWave`,
+    'END:VEVENT', 'END:VCALENDAR',
+  ].join('\r\n');
+  const url = URL.createObjectURL(new Blob([ics], { type: 'text/calendar;charset=utf-8' }));
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${(event.name || 'event').replace(/[^a-z0-9]+/gi, '-').toLowerCase()}.ics`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 // Remaining tickets + percent sold, guarding missing fields.
 export const availability = (e) => {
   const total = e?.ticketsTotal || 0;
