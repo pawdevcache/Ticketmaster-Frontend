@@ -28,13 +28,20 @@ All routes except `/login` are gated behind auth.
 
 ```
 src/
-  api.js            all backend endpoints (fetch wrapper)
-  auth.jsx          AuthContext (token in localStorage)
-  icons.jsx         central icon list (react-icons/cg)
-  util.js           date/price/availability/cover helpers
-  index.css         design system (color palette as CSS vars)
-  components/       Navbar, EventCard, Footer
-  pages/            Home, EventDetail, Auth, Bookings
+  main.jsx          entry point (mounts <App/>)
+  App.jsx           providers + router + route guards
+  services/
+    api.js          all backend endpoints (fetch wrapper)
+  context/
+    AuthContext.jsx   user session (token in localStorage)
+    AdminContext.jsx  separate admin session
+  components/        Navbar, Footer, EventCard
+  pages/             Home, EventDetail, Auth, Bookings, AdminDashboard
+  utils/
+    format.js       date/price/availability/cover helpers
+    icons.jsx       central icon list (react-icons/cg)
+  styles/
+    index.css       design system (color palette as CSS vars)
 ```
 
 Palette lives in `:root` in `index.css` (`--primary #0057FF`, `--accent #7C3AED`, etc.).

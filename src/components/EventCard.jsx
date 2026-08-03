@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import { cover, money, fmtDate, availability } from '../util';
-import { SegIcon } from '../icons';
+import { cover, money, fmtDate, availability } from '../utils/format';
+import { SegIcon } from '../utils/icons';
 
 export default function EventCard({ event, cat, index = 0 }) {
   const nav = useNavigate();

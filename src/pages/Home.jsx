@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { api } from '../api';
+import { api } from '../services/api';
 import EventCard from '../components/EventCard';
 import Footer from '../components/Footer';
-import { cover, fmtDate, money } from '../util';
-import { IcoSearch, IcoSpark, IcoFeatured, IcoAll, IcoDate, IcoArrow, SegIcon } from '../icons';
+import { cover, fmtDate, money } from '../utils/format';
+import { IcoSearch, IcoSpark, IcoFeatured, IcoAll, IcoDate, IcoArrow, SegIcon } from '../utils/icons';
 
 export default function Home() {
   const nav = useNavigate();

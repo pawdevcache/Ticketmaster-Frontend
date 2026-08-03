@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { IcoTicket } from '../icons';
+import { IcoTicket } from '../utils/icons';
 
 export default function Footer() {
   return (

@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { api, adminApi } from '../api';
-import { useAdmin } from '../adminAuth';
-import { money, fmtDate, cover } from '../util';
+import { api, adminApi } from '../services/api';
+import { useAdmin } from '../context/AdminContext';
+import { money, fmtDate, cover } from '../utils/format';
 import {
   IcoStats, IcoEvents, IcoVenue, IcoMic, IcoAll, IcoUsers, IcoTickets,
   IcoTrash, IcoAdd, IcoLogout, IcoTicket,
-} from '../icons';
+} from '../utils/icons';
 
 const TABS = [
   ['overview', 'Overview', IcoStats],

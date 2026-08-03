@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../auth';
-import { IcoTickets, IcoUser, IcoLogout, IcoLogin, IcoTicket } from '../icons';
+import { useAuth } from '../context/AuthContext';
+import { IcoTickets, IcoUser, IcoLogout, IcoLogin, IcoTicket } from '../utils/icons';
 
 export default function Navbar() {
   const { user, logout } = useAuth();

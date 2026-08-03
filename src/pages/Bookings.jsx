@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { api } from '../api';
-import { useAuth } from '../auth';
+import { api } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import Footer from '../components/Footer';
-import { cover, money, fmtDate } from '../util';
-import { IcoDate, IcoTickets } from '../icons';
+import { cover, money, fmtDate } from '../utils/format';
+import { IcoDate, IcoTickets } from '../utils/icons';
 
 export default function Bookings() {
   const { user } = useAuth();
