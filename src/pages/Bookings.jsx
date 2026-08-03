@@ -113,7 +113,14 @@ export default function Bookings() {
           </div>
           <div className="eticket-body">
             <div className="eticket-qr">
-              <QRCodeSVG value={`TIXWAVE:${ticket.id}`} size={172} level="M" />
+              <QRCodeSVG value={[
+                'TixWave E-Ticket',
+                `Event: ${ticket.event?.name || 'Event'}`,
+                ticket.event ? `Date: ${fmtDate(ticket.event.date).full}` : '',
+                `Tickets: ${ticket.quantity}`,
+                `Ref: ${ticket.id.slice(-8).toUpperCase()}`,
+                `Booking ID: ${ticket.id}`,
+              ].filter(Boolean).join('\n')} size={172} level="M" />
             </div>
             <div className="eticket-meta">
               <div><span className="muted">Tickets</span><strong>{ticket.quantity}</strong></div>
