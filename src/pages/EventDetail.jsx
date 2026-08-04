@@ -37,12 +37,10 @@ export default function EventDetail() {
     if (!user) return nav('/login');
     setBusy(true); setMsg(null);
     try {
-      await api.book({ eventId: event.id, quantity: qty });
-      setMsg({ ok: true, text: `Booked ${qty} ticket(s)! View them under My Tickets.` });
-      setEvent(await api.event(id)); // refresh availability
+      const b = await api.book({ eventId: event.id, quantity: qty });
+      nav(`/booking/${b.id}`); // → order confirmation
     } catch (e) {
       setMsg({ ok: false, text: e.message });
-    } finally {
       setBusy(false);
     }
   };

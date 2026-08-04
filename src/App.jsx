@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import EventDetail from './pages/EventDetail';
 import Auth from './pages/Auth';
 import Bookings from './pages/Bookings';
+import BookingConfirmation from './pages/BookingConfirmation';
 import AdminDashboard from './pages/AdminDashboard';
 
 // Gate user screens behind the user session; bounce guests to /login.
@@ -34,6 +35,7 @@ export default function App() {
               <Route path="/login" element={<Auth />} />
               <Route path="/" element={<Private><Home /></Private>} />
               <Route path="/events/:id" element={<Private><EventDetail /></Private>} />
+              <Route path="/booking/:id" element={<Private><BookingConfirmation /></Private>} />
               <Route path="/bookings" element={<Private><Bookings /></Private>} />
             </Route>
             <Route path="/admin/login" element={<Navigate to="/login" replace />} />

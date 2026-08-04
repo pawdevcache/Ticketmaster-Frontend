@@ -50,6 +50,7 @@ export const api = {
   // Bookings (require auth)
   book: (body) => req('/api/bookings', { method: 'POST', body, auth: true }),
   bookings: () => req('/api/bookings', { auth: true }),
+  booking: (id) => req(`/api/bookings/${id}`, { auth: true }),
   cancelBooking: (id) => req(`/api/bookings/${id}`, { method: 'DELETE', auth: true }),
 };
 

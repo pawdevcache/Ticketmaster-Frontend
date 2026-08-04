@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { QRCodeSVG } from 'qrcode.react';
 import { api } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import Footer from '../components/Footer';
-import { cover, money, fmtDate, addToCalendar } from '../utils/format';
+import ETicket from '../components/ETicket';
+import { cover, money, fmtDate } from '../utils/format';
 import { IcoDate, IcoTickets } from '../utils/icons';
 
 export default function Bookings() {
@@ -101,37 +101,8 @@ export default function Bookings() {
 
     {ticket && (
       <div className="modal-backdrop" onClick={() => setTicket(null)}>
-        <div className="card eticket" onClick={(e) => e.stopPropagation()}>
-          <div className="eticket-head">
-            <span className="tag">E-Ticket</span>
-            <h3>{ticket.event?.name || 'Event'}</h3>
-            {ticket.event && (
-              <p style={{ display: 'inline-flex', alignItems: 'center', gap: 6, opacity: .9 }}>
-                <IcoDate /> {fmtDate(ticket.event.date).full}
-              </p>
-            )}
-          </div>
-          <div className="eticket-body">
-            <div className="eticket-qr">
-              <QRCodeSVG value={[
-                'TixWave E-Ticket',
-                `Event: ${ticket.event?.name || 'Event'}`,
-                ticket.event ? `Date: ${fmtDate(ticket.event.date).full}` : '',
-                `Tickets: ${ticket.quantity}`,
-                `Ref: ${ticket.id.slice(-8).toUpperCase()}`,
-                `Booking ID: ${ticket.id}`,
-              ].filter(Boolean).join('\n')} size={172} level="M" />
-            </div>
-            <div className="eticket-meta">
-              <div><span className="muted">Tickets</span><strong>{ticket.quantity}</strong></div>
-              <div><span className="muted">Total</span><strong>{money(ticket.total)}</strong></div>
-              <div><span className="muted">Ref</span><strong>{ticket.id.slice(-8).toUpperCase()}</strong></div>
-            </div>
-            <div className="row" style={{ gap: 10, marginTop: 4 }}>
-              <button className="btn ghost" style={{ flex: 1 }} disabled={!ticket.event} onClick={() => addToCalendar(ticket.event, ticket.quantity)}>Add to calendar</button>
-              <button className="btn" style={{ flex: 1 }} onClick={() => setTicket(null)}>Done</button>
-            </div>
-          </div>
+        <div onClick={(e) => e.stopPropagation()} style={{ width: '100%', maxWidth: 380 }}>
+          <ETicket booking={ticket} onDone={() => setTicket(null)} />
         </div>
       </div>
     )}
