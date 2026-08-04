@@ -9,10 +9,11 @@ export default function Auth() {
   const { user, register, setSession } = useAuth();
   const { admin, apply: applyAdmin } = useAdmin();
   const nav = useNavigate();
-  const [mode, setMode] = useState('login');   // 'login' | 'register' | 'reset'
-  const [form, setForm] = useState({ name: '', email: '', password: '' });
+  // 'login' | 'register' | 'forgot' (request token) | 'reset' (token + new password)
+  const [mode, setMode] = useState('login');
+  const [form, setForm] = useState({ name: '', email: '', password: '', token: '' });
   const [err, setErr] = useState('');
-  const [notice, setNotice] = useState('');    // success message (e.g. after reset)
+  const [notice, setNotice] = useState('');
   const [busy, setBusy] = useState(false);
 
   // Already signed in? Send admins to the console, users home.
@@ -30,12 +31,27 @@ export default function Auth() {
     e.preventDefault();
     setErr(''); setNotice('');
 
+    if (mode === 'forgot') {
+      setBusy(true);
+      try {
+        const res = await api.forgotPassword(form.email);
+        // Dev backends return the token directly; production emails it instead.
+        setForm({ ...form, token: res?.resetToken || '', password: '' });
+        setMode('reset');
+        setNotice(res?.resetToken
+          ? 'Reset code ready below — set your new password.'
+          : 'If that email exists, a reset code was sent. Enter it below.');
+      } catch (e) { setErr(e.message); } finally { setBusy(false); }
+      return;
+    }
+
     if (mode === 'reset') {
+      if (!form.token) { setErr('Enter the reset code from your email.'); return; }
       if (shortPw) { setErr(TOO_SHORT); return; }
       setBusy(true);
       try {
-        await api.resetPassword(form.email, form.password);
-        setForm({ name: '', email: form.email, password: '' });
+        await api.resetPassword(form.token, form.password);
+        setForm({ name: '', email: form.email, password: '', token: '' });
         setMode('login');
         setNotice('Password updated — sign in with your new password.');
       } catch (e) { setErr(e.message); } finally { setBusy(false); }
@@ -43,7 +59,7 @@ export default function Auth() {
     }
 
     if (mode === 'register') {
-      if (shortPw) { setErr(TOO_SHORT); return; } // new accounts must meet the policy
+      if (shortPw) { setErr(TOO_SHORT); return; }
       setBusy(true);
       try { await register(form.name, form.email, form.password); nav('/'); }
       catch (e) { setErr(e.message); } finally { setBusy(false); }
@@ -64,7 +80,9 @@ export default function Auth() {
     }
   };
 
-  const cta = mode === 'login' ? 'Sign in' : mode === 'register' ? 'Create account' : 'Reset password';
+  const cta = mode === 'login' ? 'Sign in' : mode === 'register' ? 'Create account'
+    : mode === 'forgot' ? 'Send reset code' : 'Reset password';
+  const isRecovery = mode === 'forgot' || mode === 'reset';
 
   return (
     <div className="auth-wrap">
@@ -73,13 +91,15 @@ export default function Auth() {
       <div className="card reveal" style={{ padding: 34, width: '100%', maxWidth: 430, position: 'relative' }}>
         <div className="center" style={{ fontSize: 40, marginBottom: 8, color: 'var(--primary)' }}><IcoTicket /></div>
         <h2 className="center" style={{ marginBottom: 4 }}>
-          {mode === 'reset' ? 'Reset your password' : 'Welcome to TixWave'}
+          {isRecovery ? 'Reset your password' : 'Welcome to TixWave'}
         </h2>
         <p className="center muted" style={{ marginBottom: 20 }}>
-          {mode === 'reset' ? 'Enter your email and a new password.' : 'Sign in to book and manage tickets.'}
+          {mode === 'forgot' ? 'Enter your email to get a reset code.'
+            : mode === 'reset' ? 'Enter the code and your new password.'
+            : 'Sign in to book and manage tickets.'}
         </p>
 
-        {mode !== 'reset' && (
+        {!isRecovery && (
           <div className="tabs">
             <button className={mode === 'login' ? 'active' : ''} onClick={() => go('login')}>Sign in</button>
             <button className={mode === 'register' ? 'active' : ''} onClick={() => go('register')}>Register</button>
@@ -92,8 +112,15 @@ export default function Auth() {
           {mode === 'register' && (
             <input className="field" placeholder="Full name" value={form.name} onChange={set('name')} required />
           )}
-          <input className="field" type="email" placeholder="Email" value={form.email} onChange={set('email')} required />
-          <input className="field" type="password" placeholder={mode === 'reset' ? 'New password' : 'Password'} value={form.password} onChange={set('password')} required />
+          {mode !== 'reset' && (
+            <input className="field" type="email" placeholder="Email" value={form.email} onChange={set('email')} required />
+          )}
+          {mode === 'reset' && (
+            <input className="field" placeholder="Reset code" value={form.token} onChange={set('token')} required />
+          )}
+          {mode !== 'forgot' && (
+            <input className="field" type="password" placeholder={mode === 'reset' ? 'New password' : 'Password'} value={form.password} onChange={set('password')} required />
+          )}
           {needsHint && <span className="muted" style={{ fontSize: 13, marginTop: -6 }}>Use at least 6 characters.</span>}
           {err && <p className="alert err">{err}</p>}
           <button className="btn" type="submit" disabled={busy}>{busy ? 'Please wait…' : cta}</button>
@@ -101,10 +128,10 @@ export default function Auth() {
 
         {mode === 'login' && (
           <p className="center" style={{ marginTop: 16 }}>
-            <button className="linkbtn" onClick={() => go('reset')}>Forgot password?</button>
+            <button className="linkbtn" onClick={() => go('forgot')}>Forgot password?</button>
           </p>
         )}
-        {mode === 'reset' && (
+        {isRecovery && (
           <p className="center" style={{ marginTop: 16 }}>
             <button className="linkbtn" onClick={() => go('login')}>← Back to sign in</button>
           </p>

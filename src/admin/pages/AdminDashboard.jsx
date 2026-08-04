@@ -1,12 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api, adminApi } from '../../services/api';
 import { useAdmin } from '../context/AdminContext';
 import ThemeToggle from '../../shared/ThemeToggle';
+// Lazy so the ~450KB QR-scanner library loads only when Check-in is opened.
+const CheckIn = lazy(() => import('../components/CheckIn'));
 import { money, fmtDate, cover } from '../../utils/format';
 import {
   IcoStats, IcoEvents, IcoVenue, IcoMic, IcoAll, IcoUsers, IcoTickets,
-  IcoTrash, IcoAdd, IcoLogout, IcoTicket,
+  IcoTrash, IcoAdd, IcoLogout, IcoTicket, IcoScan,
 } from '../../utils/icons';
 
 const TABS = [
@@ -17,6 +19,7 @@ const TABS = [
   ['classifications', 'Categories', IcoAll],
   ['users', 'Users', IcoUsers],
   ['bookings', 'Bookings', IcoTickets],
+  ['checkin', 'Check-in', IcoScan],
 ];
 
 export default function AdminDashboard() {
@@ -225,9 +228,9 @@ export default function AdminDashboard() {
                       <td>{nameOf(d.events, b.eventId)}</td>
                       <td>{b.quantity}</td>
                       <td>{money(b.total)}</td>
-                      <td><span className={`pill ${b.status === 'confirmed' ? 'on' : 'off'}`}>{b.status}</span></td>
+                      <td><span className={`pill ${b.status === 'confirmed' || b.status === 'pending' ? 'on' : 'off'}`}>{b.status}</span></td>
                       <td className="row" style={{ gap: 8, justifyContent: 'flex-end' }}>
-                        {b.status === 'confirmed' &&
+                        {(b.status === 'confirmed' || b.status === 'pending') &&
                           <button className="btn sm ghost" onClick={() => ask('Cancel this booking? The tickets will be returned to the event.', () => act(() => adminApi.cancelBooking(b.id), 'Booking cancelled'), 'Yes, cancel')}>Cancel</button>}
                         <DelBtn onClick={() => ask('Do you want to delete this booking?', () => act(() => adminApi.deleteBooking(b.id), 'Booking deleted'))} />
                       </td>
@@ -236,6 +239,8 @@ export default function AdminDashboard() {
                 </Table>
               </>
             )}
+
+            {tab === 'checkin' && <Suspense fallback={<div className="spinner" />}><CheckIn /></Suspense>}
           </>
         )}
       </main>

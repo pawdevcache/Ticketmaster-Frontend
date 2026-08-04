@@ -24,6 +24,7 @@ export function AuthProvider({ children }) {
   };
 
   const logout = () => {
+    api.logout().catch(() => {}); // revoke the session server-side, best-effort
     localStorage.removeItem('user');
     localStorage.removeItem('token');
     setUser(null);

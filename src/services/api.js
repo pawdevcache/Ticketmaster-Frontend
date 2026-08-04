@@ -8,7 +8,9 @@ const BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
 const token = () => localStorage.getItem('token') || '';
 const adminToken = () => localStorage.getItem('admin_token') || '';
 
-async function req(path, { method = 'GET', body, auth, admin } = {}) {
+// raw:true returns { status, ok, data } without throwing on 4xx — used where the
+// error body is meaningful (e.g. check-in "already used" carries the booking).
+async function req(path, { method = 'GET', body, auth, admin, raw } = {}) {
   const bearer = admin ? adminToken() : auth ? token() : '';
   const res = await fetch(BASE + path, {
     method,
@@ -18,15 +20,17 @@ async function req(path, { method = 'GET', body, auth, admin } = {}) {
     },
     ...(body && { body: JSON.stringify(body) }),
   });
-  if (res.status === 204) return null;
+  if (res.status === 204) return raw ? { status: 204, ok: true, data: null } : null;
   // A non-JSON response almost always means the request never reached the API
   // (e.g. it hit the SPA fallback or the backend is unreachable). Surface it as
   // a clean error instead of silently returning empty data.
   const ct = res.headers.get('content-type') || '';
   if (!ct.includes('application/json')) {
+    if (raw) return { status: res.status, ok: false, data: null };
     throw new Error(`The server is unavailable right now. Please try again in a moment.`);
   }
   const data = await res.json().catch(() => null);
+  if (raw) return { status: res.status, ok: res.ok, data };
   if (!res.ok) throw new Error(data?.error || `Request failed (${res.status})`);
   return data;
 }
@@ -46,7 +50,10 @@ export const api = {
   // Auth
   register: (body) => req('/api/register', { method: 'POST', body }),
   login: (body) => req('/api/login', { method: 'POST', body }),
-  resetPassword: (email, newPassword) => req('/api/reset-password', { method: 'POST', body: { email, newPassword } }),
+  logout: () => req('/api/logout', { method: 'POST', auth: true }),
+  // Two-step password reset: request a token by email, then trade it for a password.
+  forgotPassword: (email) => req('/api/forgot-password', { method: 'POST', body: { email } }),
+  resetPassword: (token, newPassword) => req('/api/reset-password', { method: 'POST', body: { token, newPassword } }),
   // Bookings (require auth)
   book: (body) => req('/api/bookings', { method: 'POST', body, auth: true }),
   bookings: () => req('/api/bookings', { auth: true }),
@@ -62,6 +69,8 @@ export const adminApi = {
   create: (res, body) => req(`/discovery/v2/${res}`, { method: 'POST', body, admin: true }),
   update: (res, id, body) => req(`/discovery/v2/${res}/${id}`, { method: 'PUT', body, admin: true }),
   remove: (res, id) => req(`/discovery/v2/${res}/${id}`, { method: 'DELETE', admin: true }),
+  // Ticket check-in (raw: 404/409 bodies carry the result + booking)
+  checkIn: (code) => req('/api/admin/tickets/check-in', { method: 'POST', body: { code }, admin: true, raw: true }),
   // Users
   users: (params = {}) => req(`/api/admin/users?${qs(params)}`, { admin: true }).then(embedded('users')),
   updateUser: (id, body) => req(`/api/admin/users/${id}`, { method: 'PUT', body, admin: true }),

@@ -6,14 +6,9 @@ import { IcoDate } from '../../utils/icons';
 // and an "Add to calendar" action. Pass onDone to render a closing button
 // (used when shown inside a modal).
 export default function ETicket({ booking, onDone }) {
-  const qr = [
-    'TixWave E-Ticket',
-    `Event: ${booking.event?.name || 'Event'}`,
-    booking.event ? `Date: ${fmtDate(booking.event.date).full}` : '',
-    `Tickets: ${booking.quantity}`,
-    `Ref: ${booking.id.slice(-8).toUpperCase()}`,
-    `Booking ID: ${booking.id}`,
-  ].filter(Boolean).join('\n');
+  // The QR carries the server-issued ticket code — that's exactly what the gate
+  // scanner reads and check-in consumes. Falls back to the id for old bookings.
+  const qr = booking.ticketCode || booking.id;
 
   return (
     <div className="card eticket">

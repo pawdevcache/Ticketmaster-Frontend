@@ -241,6 +241,19 @@ textarea.field { resize: vertical; font-family: inherit; }
 .eticket-meta span { display: block; font-size: 12px; }
 .eticket-meta strong { font-size: 16px; font-family: var(--head); }
 
+/* Check-in scanner */
+.qr-region { width: 100%; max-width: 320px; border-radius: 14px; overflow: hidden; border: 1.5px solid var(--border); margin-bottom: 16px; background: #000; }
+.qr-region video { display: block; width: 100% !important; height: auto !important; }
+.checkin-result { padding: 18px 20px; border-left: 5px solid var(--muted); }
+.checkin-result.ok { border-left-color: var(--success); }
+.checkin-result.warn { border-left-color: #F59E0B; }
+.checkin-result.err { border-left-color: var(--error); }
+.checkin-badge { display: inline-flex; align-items: center; gap: 6px; font-family: var(--head); font-weight: 800; font-size: 18px; }
+.checkin-result.ok .checkin-badge { color: var(--success); }
+.checkin-result.warn .checkin-badge { color: #F59E0B; }
+.checkin-result.err .checkin-badge { color: var(--error); }
+.checkin-booking { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+
 /* Modal */
 .modal-backdrop { position: fixed; inset: 0; background: rgba(15, 23, 42, .55); backdrop-filter: blur(4px); display: grid; place-items: center; padding: 20px; z-index: 100; }
 .modal { width: 100%; max-width: 640px; max-height: 90vh; overflow-y: auto; padding: 26px; }

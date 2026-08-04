@@ -9,9 +9,7 @@ export default function BookingConfirmation() {
   const [booking, setBooking] = useState(null); // null = loading, false = not found
 
   useEffect(() => {
-    api.booking(id)
-      .then(async (b) => { b.event = await api.event(b.eventId).catch(() => null); setBooking(b); })
-      .catch(() => setBooking(false));
+    api.booking(id).then(setBooking).catch(() => setBooking(false)); // event is embedded
   }, [id]);
 
   if (booking === false) return <div className="empty container">Booking not found.</div>;
