@@ -6,6 +6,7 @@ import Home from './user/pages/Home';
 import EventDetail from './user/pages/EventDetail';
 import Auth from './user/pages/Auth';
 import Bookings from './user/pages/Bookings';
+import Checkout from './user/pages/Checkout';
 import BookingConfirmation from './user/pages/BookingConfirmation';
 import AdminDashboard from './admin/pages/AdminDashboard';
 
@@ -35,6 +36,7 @@ export default function App() {
               <Route path="/login" element={<Auth />} />
               <Route path="/" element={<Private><Home /></Private>} />
               <Route path="/events/:id" element={<Private><EventDetail /></Private>} />
+              <Route path="/checkout/:id" element={<Private><Checkout /></Private>} />
               <Route path="/booking/:id" element={<Private><BookingConfirmation /></Private>} />
               <Route path="/bookings" element={<Private><Bookings /></Private>} />
             </Route>

@@ -61,7 +61,9 @@ export default function Bookings() {
                     <span className="muted">{b.quantity} ticket(s) · <strong>{money(b.total)}</strong></span>
                     {active && (
                       <div className="row" style={{ gap: 8 }}>
-                        <button className="btn sm ghost" onClick={() => setTicket(b)}>View ticket</button>
+                        {b.status === 'pending'
+                          ? <button className="btn sm" onClick={() => nav(`/checkout/${b.id}`)}>Pay now</button>
+                          : <button className="btn sm ghost" onClick={() => setTicket(b)}>View ticket</button>}
                         <button className="btn sm danger" onClick={() => setConfirm(b)}>Cancel</button>
                       </div>
                     )}

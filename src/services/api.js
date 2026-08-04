@@ -55,7 +55,10 @@ export const api = {
   forgotPassword: (email) => req('/api/forgot-password', { method: 'POST', body: { email } }),
   resetPassword: (token, newPassword) => req('/api/reset-password', { method: 'POST', body: { token, newPassword } }),
   // Bookings (require auth)
+  // With payments off this returns the confirmed booking; with payments on it
+  // returns { booking (pending), payment: { clientSecret, amount, ... } }.
   book: (body) => req('/api/bookings', { method: 'POST', body, auth: true }),
+  payBooking: (id) => req(`/api/bookings/${id}/pay`, { method: 'POST', auth: true }),
   bookings: () => req('/api/bookings', { auth: true }),
   booking: (id) => req(`/api/bookings/${id}`, { auth: true }),
   cancelBooking: (id) => req(`/api/bookings/${id}`, { method: 'DELETE', auth: true }),

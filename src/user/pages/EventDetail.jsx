@@ -37,8 +37,10 @@ export default function EventDetail() {
     if (!user) return nav('/login');
     setBusy(true); setMsg(null);
     try {
-      const b = await api.book({ eventId: event.id, quantity: qty });
-      nav(`/booking/${b.id}`); // → order confirmation
+      const res = await api.book({ eventId: event.id, quantity: qty });
+      const b = res.booking || res; // payments-on wraps the booking in { booking, payment }
+      // Pending → checkout to pay; confirmed (payments off) → straight to the ticket.
+      nav(b.status === 'pending' ? `/checkout/${b.id}` : `/booking/${b.id}`);
     } catch (e) {
       setMsg({ ok: false, text: e.message });
       setBusy(false);
