@@ -10,18 +10,33 @@ export default function Home() {
   const nav = useNavigate();
   const [events, setEvents] = useState([]);
   const [classes, setClasses] = useState([]);
+  const [cities, setCities] = useState([]);
   const [keyword, setKeyword] = useState('');
   const [active, setActive] = useState('');   // classificationId filter
+  const [city, setCity] = useState('');
+  const [fromDate, setFromDate] = useState('');
+  const [sort, setSort] = useState('date');   // 'date' | 'price-asc' | 'price-desc'
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => { api.classifications().then(setClasses).catch(() => {}); }, []);
-  useEffect(() => { load(active); }, [active]);
+  // Build the city dropdown from existing venues.
+  useEffect(() => {
+    api.venues({ size: 100 }).then((vs) =>
+      setCities([...new Set(vs.map((v) => v.city).filter(Boolean))].sort())).catch(() => {});
+  }, []);
+  // Re-query whenever a server-side filter changes (keyword applies on submit).
+  useEffect(() => { load(); }, [active, city, fromDate]);
 
-  const load = async (classificationId = active, kw = keyword) => {
+  const load = async () => {
     setLoading(true); setError('');
     try {
-      setEvents(await api.events({ ...(kw && { keyword: kw }), ...(classificationId && { classificationId }) }));
+      setEvents(await api.events({
+        ...(keyword && { keyword }),
+        ...(active && { classificationId: active }),
+        ...(city && { city }),
+        ...(fromDate && { startDateTime: new Date(fromDate).toISOString() }),
+      }));
     } catch (e) {
       setError(e.message);
     } finally {
@@ -30,8 +45,15 @@ export default function Home() {
   };
 
   const classMap = Object.fromEntries(classes.map((c) => [c.id, c]));
-  const featured = !active && !keyword ? events[0] : null;
-  const rest = featured ? events.slice(1) : events;
+  const sorted = [...events].sort((a, b) =>
+    sort === 'price-asc' ? a.priceMin - b.priceMin
+    : sort === 'price-desc' ? b.priceMin - a.priceMin
+    : new Date(a.date) - new Date(b.date));
+
+  const hasFilters = active || keyword || city || fromDate;
+  const featured = hasFilters ? null : sorted[0];
+  const rest = featured ? sorted.slice(1) : sorted;
+  const clearFilters = () => { setCity(''); setFromDate(''); setKeyword(''); setActive(''); };
 
   return (
     <>
@@ -41,7 +63,7 @@ export default function Home() {
           <span className="badge"><IcoSpark /> Discover live events near you</span>
           <h1>Book tickets to the moments <em>you'll never forget.</em></h1>
           <p className="sub">Concerts, sports and theatre — discover, book and manage it all in one place.</p>
-          <form className="searchbar" onSubmit={(e) => { e.preventDefault(); load(active, keyword); }}>
+          <form className="searchbar" onSubmit={(e) => { e.preventDefault(); load(); }}>
             <input placeholder="Search artists, teams, events…" value={keyword} onChange={(e) => setKeyword(e.target.value)} />
             <button className="btn" type="submit"><IcoSearch /> Search</button>
           </form>
@@ -70,6 +92,19 @@ export default function Home() {
             <h2>Browse events</h2>
             <p>Filter by what you love.</p>
           </div>
+          <div className="filters">
+            <select className="field filter" value={city} onChange={(e) => setCity(e.target.value)} aria-label="City">
+              <option value="">All cities</option>
+              {cities.map((c) => <option key={c} value={c}>{c}</option>)}
+            </select>
+            <input className="field filter" type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} aria-label="From date" />
+            <select className="field filter" value={sort} onChange={(e) => setSort(e.target.value)} aria-label="Sort">
+              <option value="date">Soonest first</option>
+              <option value="price-asc">Price: low to high</option>
+              <option value="price-desc">Price: high to low</option>
+            </select>
+            {hasFilters && <button className="btn ghost sm" onClick={clearFilters}>Clear</button>}
+          </div>
         </div>
 
         <div className="row" style={{ flexWrap: 'wrap', marginBottom: 30 }}>
@@ -93,7 +128,7 @@ export default function Home() {
             {rest.map((e, i) => <EventCard key={e.id} event={e} cat={classMap[e.classificationId]} index={i} />)}
           </div>
         ) : (
-          <div className="empty">No events match your search. Try another keyword.</div>
+          <div className="empty">No events match your filters. Try widening your search.</div>
         )}
       </main>
       <Footer />

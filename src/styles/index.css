@@ -198,7 +198,9 @@ select.field option { color: initial; } /* dropdown list stays readable on nativ
 .alert.ok { background: color-mix(in srgb, var(--success) 12%, var(--card)); color: var(--success); }
 .spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin .7s linear infinite; margin: 80px auto; }
 @keyframes spin { to { transform: rotate(360deg); } }
-.section-head { display: flex; align-items: flex-end; justify-content: space-between; margin: 52px 0 22px; }
+.section-head { display: flex; align-items: flex-end; justify-content: space-between; margin: 52px 0 22px; flex-wrap: wrap; gap: 16px; }
+.filters { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.filters .filter { width: auto; padding: 10px 12px; font-size: 14px; }
 .section-head h2 { font-size: 30px; font-weight: 800; }
 .section-head p { color: var(--muted); margin-top: 4px; }
 .empty { text-align: center; padding: 70px 20px; color: var(--muted); }
