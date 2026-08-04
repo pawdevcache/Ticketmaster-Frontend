@@ -96,7 +96,7 @@ select.field option { color: initial; } /* dropdown list stays readable on nativ
 .pill.off { background: color-mix(in srgb, var(--error) 15%, var(--card)); color: var(--error); }
 .chip {
   padding: 10px 18px; border-radius: 999px; border: 1.5px solid var(--border);
-  background: var(--card); cursor: pointer; font-weight: 600; font-size: 14px; white-space: nowrap;
+  background: var(--card); color: var(--text); cursor: pointer; font-weight: 600; font-size: 14px; white-space: nowrap;
   transition: all .18s; display: inline-flex; align-items: center; gap: 7px;
 }
 .chip:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-1px); }
