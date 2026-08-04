@@ -26,26 +26,29 @@ All routes except `/login` are gated behind auth.
 
 ## Structure
 
+Separated by domain — `admin/`, `user/`, and `shared/` — over cross-cutting infra.
+
 ```
 src/
-  main.jsx          entry point (mounts <App/>)
+  main.jsx          entry point (mounts <App/>, applies theme)
   App.jsx           providers + router + route guards
-  services/
-    api.js          all backend endpoints (fetch wrapper)
-  context/
-    AuthContext.jsx   user session (token in localStorage)
-    AdminContext.jsx  separate admin session
-  components/        Navbar, Footer, EventCard
-  pages/             Home, EventDetail, Auth, Bookings, AdminDashboard
+  user/             everything a customer sees
+    context/AuthContext.jsx        user session (token in localStorage)
+    components/     Navbar, EventCard, ETicket
+    pages/          Home, EventDetail, Auth, Bookings, BookingConfirmation
+  admin/            everything staff sees
+    context/AdminContext.jsx        separate admin session
+    pages/AdminDashboard.jsx
+  shared/           used by both — Footer, ThemeToggle
+  services/api.js   all backend endpoints (fetch wrapper: api + adminApi)
   utils/
-    format.js       date/price/availability/cover helpers
+    format.js       date/price/availability/cover/calendar helpers
     icons.jsx       central icon list (react-icons/cg)
-  styles/
-    index.css       design system (color palette as CSS vars)
+  styles/index.css  design system (color palette + light/dark themes)
 ```
 
-Palette lives in `:root` in `index.css` (`--primary #0057FF`, `--accent #7C3AED`, etc.).
-Icons come from the css.gg set via `react-icons/cg`, aliased centrally in `src/icons.jsx`.
+Palette + themes live in `:root` / `:root[data-theme="dark"]` in `styles/index.css`.
+Icons come from the css.gg set via `react-icons/cg`, aliased centrally in `utils/icons.jsx`.
 
 ## Deploy to Vercel
 
