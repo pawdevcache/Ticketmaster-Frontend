@@ -1,6 +1,6 @@
 import { QRCodeSVG } from 'qrcode.react';
-import { fmtDate, money, addToCalendar } from '../utils/format';
-import { IcoDate } from '../utils/icons';
+import { fmtDate, money, addToCalendar } from '../../utils/format';
+import { IcoDate } from '../../utils/icons';
 
 // A single e-ticket card: dark header, scannable QR (readable details), stub,
 // and an "Add to calendar" action. Pass onDone to render a closing button

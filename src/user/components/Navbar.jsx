@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import ThemeToggle from './ThemeToggle';
-import { IcoTickets, IcoUser, IcoLogout, IcoLogin, IcoTicket } from '../utils/icons';
+import ThemeToggle from '../../shared/ThemeToggle';
+import { IcoTickets, IcoUser, IcoLogout, IcoLogin, IcoTicket } from '../../utils/icons';
 
 export default function Navbar() {
   const { user, logout } = useAuth();

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { api } from '../services/api';
-import Footer from '../components/Footer';
+import { api } from '../../services/api';
+import Footer from '../../shared/Footer';
 import ETicket from '../components/ETicket';
 
 export default function BookingConfirmation() {

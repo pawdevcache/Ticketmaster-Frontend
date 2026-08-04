@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
-import { api } from '../services/api';
+import { api } from '../../services/api';
 import { useAuth } from '../context/AuthContext';
-import { useAdmin } from '../context/AdminContext';
-import { IcoTicket } from '../utils/icons';
+import { useAdmin } from '../../admin/context/AdminContext';
+import { IcoTicket } from '../../utils/icons';
 
 export default function Auth() {
   const { user, register, setSession } = useAuth();

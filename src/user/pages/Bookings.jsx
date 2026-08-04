@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { api } from '../services/api';
+import { api } from '../../services/api';
 import { useAuth } from '../context/AuthContext';
-import Footer from '../components/Footer';
+import Footer from '../../shared/Footer';
 import ETicket from '../components/ETicket';
-import { cover, money, fmtDate } from '../utils/format';
-import { IcoDate, IcoTickets } from '../utils/icons';
+import { cover, money, fmtDate } from '../../utils/format';
+import { IcoDate, IcoTickets } from '../../utils/icons';
 
 export default function Bookings() {
   const { user } = useAuth();

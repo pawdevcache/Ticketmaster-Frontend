@@ -1,13 +1,13 @@
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/AuthContext';
-import { AdminProvider, useAdmin } from './context/AdminContext';
-import Navbar from './components/Navbar';
-import Home from './pages/Home';
-import EventDetail from './pages/EventDetail';
-import Auth from './pages/Auth';
-import Bookings from './pages/Bookings';
-import BookingConfirmation from './pages/BookingConfirmation';
-import AdminDashboard from './pages/AdminDashboard';
+import { AuthProvider, useAuth } from './user/context/AuthContext';
+import { AdminProvider, useAdmin } from './admin/context/AdminContext';
+import Navbar from './user/components/Navbar';
+import Home from './user/pages/Home';
+import EventDetail from './user/pages/EventDetail';
+import Auth from './user/pages/Auth';
+import Bookings from './user/pages/Bookings';
+import BookingConfirmation from './user/pages/BookingConfirmation';
+import AdminDashboard from './admin/pages/AdminDashboard';
 
 // Gate user screens behind the user session; bounce guests to /login.
 function Private({ children }) {
