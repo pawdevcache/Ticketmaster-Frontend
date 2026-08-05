@@ -3,12 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { api, adminApi } from '../../services/api';
 import { useAdmin } from '../context/AdminContext';
 import ThemeToggle from '../../shared/ThemeToggle';
+import Door from '../components/Door';
 // Lazy so the ~450KB QR-scanner library loads only when Check-in is opened.
 const CheckIn = lazy(() => import('../components/CheckIn'));
 import { money, fmtDate, cover } from '../../utils/format';
 import {
   IcoStats, IcoEvents, IcoVenue, IcoMic, IcoAll, IcoUsers, IcoTickets,
-  IcoTrash, IcoAdd, IcoLogout, IcoTicket, IcoScan,
+  IcoTrash, IcoAdd, IcoLogout, IcoTicket, IcoScan, IcoLogin,
 } from '../../utils/icons';
 
 const TABS = [
@@ -20,6 +21,7 @@ const TABS = [
   ['users', 'Users', IcoUsers],
   ['bookings', 'Bookings', IcoTickets],
   ['checkin', 'Check-in', IcoScan],
+  ['door', 'Door', IcoLogin],
 ];
 
 export default function AdminDashboard() {
@@ -241,6 +243,8 @@ export default function AdminDashboard() {
             )}
 
             {tab === 'checkin' && <Suspense fallback={<div className="spinner" />}><CheckIn /></Suspense>}
+
+            {tab === 'door' && <Door />}
           </>
         )}
       </main>

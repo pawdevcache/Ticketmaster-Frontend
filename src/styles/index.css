@@ -241,6 +241,18 @@ textarea.field { resize: vertical; font-family: inherit; }
 .eticket-meta span { display: block; font-size: 12px; }
 .eticket-meta strong { font-size: 16px; font-family: var(--head); }
 
+/* Door dashboard */
+.door-card { padding: 22px; }
+.door-card h4 { font-size: 16px; margin-bottom: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.door-nums { display: flex; align-items: baseline; gap: 6px; margin-bottom: 10px; }
+.door-nums b { font-family: var(--head); font-size: 34px; line-height: 1; color: var(--primary); font-variant-numeric: tabular-nums; }
+.door-meta { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 12px; font-size: 13px; }
+.live-toggle { display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px; border-radius: 999px; border: 1.5px solid var(--border); background: var(--card); color: var(--muted); font-weight: 600; font-size: 13px; cursor: pointer; }
+.live-toggle.on { color: var(--success); border-color: color-mix(in srgb, var(--success) 40%, var(--border)); }
+.live-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.live-toggle.on .live-dot { animation: pulse 1.4s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; box-shadow: 0 0 0 0 color-mix(in srgb, var(--success) 60%, transparent); } 50% { opacity: .5; box-shadow: 0 0 0 5px transparent; } }
+
 /* Check-in scanner */
 .qr-region { width: 100%; max-width: 320px; border-radius: 14px; overflow: hidden; border: 1.5px solid var(--border); margin-bottom: 16px; background: #000; }
 .qr-region video { display: block; width: 100% !important; height: auto !important; }
