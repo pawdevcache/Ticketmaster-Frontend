@@ -74,6 +74,8 @@ export const adminApi = {
   remove: (res, id) => req(`/discovery/v2/${res}/${id}`, { method: 'DELETE', admin: true }),
   // Ticket check-in (raw: 404/409 bodies carry the result + booking)
   checkIn: (code) => req('/api/admin/tickets/check-in', { method: 'POST', body: { code }, admin: true, raw: true }),
+  // Offline/bulk check-in: flush a queue of { code, scannedAt } → { results, summary }.
+  checkInBulk: (scans) => req('/api/admin/tickets/check-in/bulk', { method: 'POST', body: { scans }, admin: true }),
   // Door dashboard: sold vs admitted per event (poll for live figures)
   door: (eventId = '') => req(`/api/admin/door${eventId ? `?eventId=${eventId}` : ''}`, { admin: true }).then((d) => d?.events || []),
   // Users
