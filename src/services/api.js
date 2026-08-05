@@ -51,6 +51,9 @@ export const api = {
   register: (body) => req('/api/register', { method: 'POST', body }),
   login: (body) => req('/api/login', { method: 'POST', body }),
   logout: () => req('/api/logout', { method: 'POST', auth: true }),
+  // Own profile
+  me: () => req('/api/me', { auth: true }),
+  updateMe: (body) => req('/api/me', { method: 'PUT', body, auth: true }),
   // Two-step password reset: request a token by email, then trade it for a password.
   forgotPassword: (email) => req('/api/forgot-password', { method: 'POST', body: { email } }),
   resetPassword: (token, newPassword) => req('/api/reset-password', { method: 'POST', body: { token, newPassword } }),

@@ -8,6 +8,7 @@ import EventDetail from './user/pages/EventDetail';
 import Auth from './user/pages/Auth';
 import Bookings from './user/pages/Bookings';
 import Saved from './user/pages/Saved';
+import Profile from './user/pages/Profile';
 import Checkout from './user/pages/Checkout';
 import BookingConfirmation from './user/pages/BookingConfirmation';
 import AdminDashboard from './admin/pages/AdminDashboard';
@@ -40,6 +41,7 @@ export default function App() {
                 <Route path="/" element={<Private><Home /></Private>} />
                 <Route path="/events/:id" element={<Private><EventDetail /></Private>} />
                 <Route path="/saved" element={<Private><Saved /></Private>} />
+                <Route path="/profile" element={<Private><Profile /></Private>} />
                 <Route path="/checkout/:id" element={<Private><Checkout /></Private>} />
                 <Route path="/booking/:id" element={<Private><BookingConfirmation /></Private>} />
                 <Route path="/bookings" element={<Private><Bookings /></Private>} />

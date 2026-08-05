@@ -321,7 +321,7 @@ textarea.field { resize: vertical; font-family: inherit; }
   .nav .row { gap: 8px; }
   .logo { font-size: 18px; }
   .logo svg { font-size: 20px; }
-  .nav .pill, .admin-topbar .pill { display: none; }
+  .nav-email, .admin-topbar .pill { display: none; }
   .btn { padding: 12px 18px; font-size: 14px; }
   .btn.sm { padding: 8px 12px; font-size: 13px; }
 

@@ -19,7 +19,7 @@ export default function Navbar() {
             <>
               <Link to="/saved" className="btn ghost sm"><IcoHeart /> Saved{ids.length ? ` (${ids.length})` : ''}</Link>
               <Link to="/bookings" className="btn ghost sm"><IcoTickets /> My Tickets</Link>
-              <span className="pill"><IcoUser /> {user.email}</span>
+              <Link to="/profile" className="pill" title="My profile"><IcoUser /> <span className="nav-email">{user.email}</span></Link>
               <button className="btn sm danger" onClick={() => { logout(); nav('/'); }}>
                 <IcoLogout /> Logout
               </button>

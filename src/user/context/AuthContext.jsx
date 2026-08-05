@@ -30,7 +30,11 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
+  // Refresh the stored profile (name/email) without touching the token, e.g.
+  // after the user edits their profile.
+  const updateUser = (u) => { localStorage.setItem('user', JSON.stringify(u)); setUser(u); };
+
   // setSession persists a session from an already-fetched { user, token }, so a
   // shared login page can decide the role first and then apply the session.
-  return <Ctx.Provider value={{ user, login, register, logout, setSession: persist }}>{children}</Ctx.Provider>;
+  return <Ctx.Provider value={{ user, login, register, logout, updateUser, setSession: persist }}>{children}</Ctx.Provider>;
 }
