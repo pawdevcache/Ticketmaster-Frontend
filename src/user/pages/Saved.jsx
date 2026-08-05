@@ -4,6 +4,7 @@ import { api } from '../../services/api';
 import { useFavorites } from '../context/FavoritesContext';
 import EventCard from '../components/EventCard';
 import Footer from '../../shared/Footer';
+import { EventGridSkeleton } from '../../shared/Skeletons';
 import { IcoHeart } from '../../utils/icons';
 
 export default function Saved() {
@@ -28,9 +29,10 @@ export default function Saved() {
         </div>
 
         {events === null ? (
-          <div className="spinner" />
+          <EventGridSkeleton count={4} />
         ) : events.length === 0 ? (
           <div className="empty">
+            <div className="empty-ico"><IcoHeart /></div>
             No saved events yet — tap the heart on any event to save it.<br />
             <Link to="/" className="btn" style={{ marginTop: 16 }}>Discover events</Link>
           </div>

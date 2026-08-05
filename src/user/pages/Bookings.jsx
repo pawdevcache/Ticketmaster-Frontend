@@ -4,6 +4,7 @@ import { api } from '../../services/api';
 import { useAuth } from '../context/AuthContext';
 import Footer from '../../shared/Footer';
 import ETicket from '../components/ETicket';
+import { ListSkeleton } from '../../shared/Skeletons';
 import { cover, money, fmtDate } from '../../utils/format';
 import { IcoDate, IcoTickets } from '../../utils/icons';
 
@@ -30,7 +31,14 @@ export default function Bookings() {
     finally { setBusy(false); }
   };
 
-  if (items === null) return <div className="spinner" />;
+  if (items === null) return (
+    <main className="container" style={{ padding: '32px 24px 80px' }}>
+      <div className="section-head" style={{ marginTop: 0 }}>
+        <h2 style={{ display: 'flex', alignItems: 'center', gap: 10 }}><IcoTickets /> My Tickets</h2>
+      </div>
+      <ListSkeleton />
+    </main>
+  );
 
   return (
     <>
@@ -41,6 +49,7 @@ export default function Bookings() {
 
       {items.length === 0 ? (
         <div className="empty">
+          <div className="empty-ico"><IcoTickets /></div>
           You have no bookings yet.<br />
           <Link to="/" className="btn" style={{ marginTop: 16 }}>Discover events</Link>
         </div>

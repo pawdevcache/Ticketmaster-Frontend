@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../../services/api';
 import EventCard from '../components/EventCard';
 import Footer from '../../shared/Footer';
+import { EventGridSkeleton } from '../../shared/Skeletons';
 import { cover, fmtDate, money } from '../../utils/format';
 import { IcoSearch, IcoSpark, IcoFeatured, IcoAll, IcoDate, IcoArrow, SegIcon } from '../../utils/icons';
 
@@ -117,7 +118,7 @@ export default function Home() {
         </div>
 
         {loading ? (
-          <div className="spinner" />
+          <EventGridSkeleton />
         ) : error ? (
           <div className="empty">
             <p className="alert err" style={{ display: 'inline-block' }}>⚠️ Couldn't load events.</p>
@@ -128,7 +129,10 @@ export default function Home() {
             {rest.map((e, i) => <EventCard key={e.id} event={e} cat={classMap[e.classificationId]} index={i} />)}
           </div>
         ) : (
-          <div className="empty">No events match your filters. Try widening your search.</div>
+          <div className="empty">
+            <div className="empty-ico"><IcoSearch /></div>
+            No events match your filters. Try widening your search.
+          </div>
         )}
       </main>
       <Footer />

@@ -33,7 +33,20 @@ export default function EventDetail() {
   }, [id]);
 
   if (event === false) return <div className="empty container">Event not found.</div>;
-  if (!event) return <div className="spinner" />;
+  if (!event) return (
+    <main className="container" style={{ padding: '28px 24px 80px' }}>
+      <div className="skeleton" style={{ height: 380, borderRadius: 'var(--radius)' }} />
+      <div className="detail-grid">
+        <div>
+          <div className="skeleton" style={{ height: 26, width: '45%', marginBottom: 18 }} />
+          <div className="skeleton" style={{ height: 14, marginBottom: 10 }} />
+          <div className="skeleton" style={{ height: 14, width: '85%', marginBottom: 10 }} />
+          <div className="skeleton" style={{ height: 14, width: '70%' }} />
+        </div>
+        <div className="skeleton" style={{ height: 280, borderRadius: 'var(--radius)' }} />
+      </div>
+    </main>
+  );
 
   const d = fmtDate(event.date);
   const { left } = availability(event);
@@ -105,9 +118,9 @@ export default function EventDetail() {
           <div style={{ margin: '20px 0' }}>
             <label className="muted" style={{ fontSize: 14 }}>Quantity</label>
             <div className="stepper" style={{ marginTop: 8 }}>
-              <button onClick={() => setQty((q) => Math.max(1, q - 1))}>−</button>
-              <strong style={{ fontSize: 18 }}>{qty}</strong>
-              <button onClick={() => setQty((q) => Math.min(left || 1, q + 1))}>+</button>
+              <button aria-label="Decrease quantity" onClick={() => setQty((q) => Math.max(1, q - 1))}>−</button>
+              <strong style={{ fontSize: 18 }} aria-live="polite">{qty}</strong>
+              <button aria-label="Increase quantity" onClick={() => setQty((q) => Math.min(left || 1, q + 1))}>+</button>
             </div>
           </div>
 

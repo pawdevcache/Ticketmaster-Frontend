@@ -407,5 +407,5 @@ const Table = ({ head, children }) => (
 );
 
 const DelBtn = ({ onClick }) => (
-  <button className="btn sm danger" title="Delete" onClick={onClick}><IcoTrash /></button>
+  <button className="btn sm danger" title="Delete" aria-label="Delete" onClick={onClick}><IcoTrash /></button>
 );

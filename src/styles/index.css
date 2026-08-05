@@ -59,6 +59,20 @@ svg { flex-shrink: 0; vertical-align: middle; }
 @keyframes rise { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
 .reveal { animation: rise .6s cubic-bezier(.2,.7,.2,1) both; }
 
+/* Keyboard focus — visible ring for a11y, but not on mouse click */
+:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 4px; }
+
+/* Skeleton loaders */
+.skeleton { position: relative; overflow: hidden; background: color-mix(in srgb, var(--muted) 18%, var(--card)); border-radius: 8px; }
+.skeleton::after { content: ''; position: absolute; inset: 0; transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--card) 60%, transparent), transparent);
+  animation: shimmer 1.4s infinite; }
+@keyframes shimmer { 100% { transform: translateX(100%); } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
+}
+
 /* Buttons */
 .btn {
   position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
@@ -208,6 +222,7 @@ select.field option { color: initial; } /* dropdown list stays readable on nativ
 .section-head h2 { font-size: 30px; font-weight: 800; }
 .section-head p { color: var(--muted); margin-top: 4px; }
 .empty { text-align: center; padding: 70px 20px; color: var(--muted); }
+.empty-ico { font-size: 46px; opacity: .45; margin-bottom: 14px; display: flex; justify-content: center; }
 
 /* Admin */
 .admin-login { min-height: 100vh; display: grid; place-items: center; padding: 40px 20px; background: radial-gradient(1000px circle at 50% -10%, rgba(124,58,237,.18), var(--bg)); }
