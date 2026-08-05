@@ -154,7 +154,11 @@ select.field option { color: initial; } /* dropdown list stays readable on nativ
 .ev-img { height: 190px; background-size: cover; background-position: center; position: relative; overflow: hidden; transition: transform .4s; }
 .ev-card:hover .ev-img { transform: scale(1.06); }
 .ev-img::after { content:''; position:absolute; inset:0; background: linear-gradient(to top, rgba(15,23,42,.35), transparent 45%); }
-.ev-cat { position: absolute; top: 12px; right: 12px; z-index: 1; background: rgba(255,255,255,.9); backdrop-filter: blur(6px); color: var(--dark); padding: 5px 11px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+.ev-cat { position: absolute; bottom: 12px; left: 12px; z-index: 1; background: rgba(255,255,255,.9); backdrop-filter: blur(6px); color: var(--dark); padding: 5px 11px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+.fav-btn { position: absolute; top: 12px; right: 12px; z-index: 2; width: 36px; height: 36px; border-radius: 50%; border: none; background: rgba(255,255,255,.92); backdrop-filter: blur(6px); color: var(--muted); display: grid; place-items: center; cursor: pointer; font-size: 18px; box-shadow: var(--shadow); transition: transform .15s, color .15s; }
+.fav-btn:hover { transform: scale(1.12); }
+.fav-btn.on { color: var(--error); }
+.btn.ghost.fav-active { color: var(--error); border-color: color-mix(in srgb, var(--error) 40%, var(--border)); }
 .ev-date {
   position: absolute; top: 12px; left: 12px; z-index: 1; background: var(--card); border-radius: 12px;
   padding: 7px 11px; text-align: center; line-height: 1.1; box-shadow: var(--shadow);

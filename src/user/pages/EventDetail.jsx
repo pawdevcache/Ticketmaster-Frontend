@@ -2,28 +2,34 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { api } from '../../services/api';
 import { useAuth } from '../context/AuthContext';
+import { useFavorites } from '../context/FavoritesContext';
 import Footer from '../../shared/Footer';
+import EventCard from '../components/EventCard';
 import { cover, money, fmtDate, availability } from '../../utils/format';
-import { IcoDate, IcoVenue, IcoMic } from '../../utils/icons';
+import { IcoDate, IcoVenue, IcoMic, IcoHeart } from '../../utils/icons';
 
 export default function EventDetail() {
   const { id } = useParams();
   const nav = useNavigate();
   const { user } = useAuth();
+  const { has, toggle } = useFavorites();
   const [event, setEvent] = useState(null);
   const [venue, setVenue] = useState(null);
   const [acts, setActs] = useState([]);
+  const [pool, setPool] = useState([]);       // events for "related" sections
   const [qty, setQty] = useState(1);
   const [msg, setMsg] = useState(null);        // { ok, text }
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     api.event(id).then(async (e) => {
       setEvent(e);
       if (e.venueId) api.venue(e.venueId).then(setVenue).catch(() => {});
       Promise.all((e.attractionIds || []).map((a) => api.attraction(a).catch(() => null)))
         .then((r) => setActs(r.filter(Boolean)));
     }).catch(() => setEvent(false));
+    api.events({ size: 100 }).then(setPool).catch(() => {});
   }, [id]);
 
   if (event === false) return <div className="empty container">Event not found.</div>;
@@ -32,6 +38,9 @@ export default function EventDetail() {
   const d = fmtDate(event.date);
   const { left } = availability(event);
   const soldOut = left <= 0 || event.status !== 'onsale';
+  const saved = has(event.id);
+  const sameVenue = pool.filter((e) => e.venueId === event.venueId && e.id !== event.id).slice(0, 4);
+  const sameCat = pool.filter((e) => e.classificationId === event.classificationId && e.id !== event.id).slice(0, 4);
 
   const book = async () => {
     if (!user) return nav('/login');
@@ -110,10 +119,26 @@ export default function EventDetail() {
           <button className="btn" style={{ width: '100%' }} disabled={soldOut || busy} onClick={book}>
             {soldOut ? 'Sold out' : busy ? 'Booking…' : user ? 'Book now' : 'Sign in to book'}
           </button>
+          <button className={`btn ghost ${saved ? 'fav-active' : ''}`} style={{ width: '100%', marginTop: 10 }} onClick={() => toggle(event.id)}>
+            <IcoHeart /> {saved ? 'Saved' : 'Save event'}
+          </button>
 
           {msg && <p className={`alert ${msg.ok ? 'ok' : 'err'}`} style={{ marginTop: 14 }}>{msg.text}</p>}
         </aside>
       </div>
+
+      {sameVenue.length > 0 && (
+        <section style={{ marginTop: 8 }}>
+          <div className="section-head"><h2 style={{ fontSize: 24 }}>More at {venue?.name || 'this venue'}</h2></div>
+          <div className="grid">{sameVenue.map((e, i) => <EventCard key={e.id} event={e} index={i} />)}</div>
+        </section>
+      )}
+      {sameCat.length > 0 && (
+        <section>
+          <div className="section-head"><h2 style={{ fontSize: 24 }}>You might also like</h2></div>
+          <div className="grid">{sameCat.map((e, i) => <EventCard key={e.id} event={e} index={i} />)}</div>
+        </section>
+      )}
     </main>
     <Footer />
     </>

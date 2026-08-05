@@ -27,6 +27,7 @@ import {
   CgMoon,
   CgScan,
   CgCheck,
+  CgHeart,
 } from 'react-icons/cg';
 
 export {
@@ -52,6 +53,7 @@ export {
   CgMoon as IcoMoon,
   CgScan as IcoScan,
   CgCheck as IcoCheck,
+  CgHeart as IcoHeart,
 };
 
 // Pick an icon component for a classification segment.
