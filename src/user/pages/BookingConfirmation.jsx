@@ -3,7 +3,6 @@ import { Link, useParams } from 'react-router-dom';
 import { api } from '../../services/api';
 import Footer from '../../shared/Footer';
 import ETicket from '../components/ETicket';
-import { fmtDate } from '../../utils/format';
 
 export default function BookingConfirmation() {
   const { id } = useParams();
@@ -28,12 +27,6 @@ export default function BookingConfirmation() {
         </div>
 
         <ETicket booking={booking} />
-
-        {booking.createdAt && (
-          <p className="center muted" style={{ marginTop: 14, fontSize: 14 }}>
-            Booked on {fmtDate(booking.createdAt).full}
-          </p>
-        )}
 
         <div className="row" style={{ gap: 12, marginTop: 22 }}>
           <Link to="/bookings" className="btn" style={{ flex: 1, justifyContent: 'center' }}>My Tickets</Link>
