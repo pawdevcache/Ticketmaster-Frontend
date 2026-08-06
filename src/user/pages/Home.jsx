@@ -19,6 +19,8 @@ export default function Home() {
   const [sort, setSort] = useState('date');   // 'date' | 'price-asc' | 'price-desc'
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [history, setHistory] = useState(() => JSON.parse(localStorage.getItem('search_history') || '[]'));
+  const [showHistory, setShowHistory] = useState(false);
 
   useEffect(() => { api.classifications().then(setClasses).catch(() => {}); }, []);
   // Build the city dropdown from existing venues.
@@ -29,11 +31,11 @@ export default function Home() {
   // Re-query whenever a server-side filter changes (keyword applies on submit).
   useEffect(() => { load(); }, [active, city, fromDate]);
 
-  const load = async () => {
+  const load = async (kw = keyword) => {
     setLoading(true); setError('');
     try {
       setEvents(await api.events({
-        ...(keyword && { keyword }),
+        ...(kw && { keyword: kw }),
         ...(active && { classificationId: active }),
         ...(city && { city }),
         ...(fromDate && { startDateTime: new Date(fromDate).toISOString() }),
@@ -44,6 +46,15 @@ export default function Home() {
       setLoading(false);
     }
   };
+
+  // Recent searches, kept in the browser.
+  const saveHistory = (arr) => { localStorage.setItem('search_history', JSON.stringify(arr)); setHistory(arr); };
+  const pushHistory = (term) => {
+    const t = term.trim(); if (!t) return;
+    saveHistory([t, ...history.filter((h) => h.toLowerCase() !== t.toLowerCase())].slice(0, 8));
+  };
+  const runSearch = (term) => { setKeyword(term); setShowHistory(false); pushHistory(term); load(term); };
+  const submitSearch = (e) => { e.preventDefault(); setShowHistory(false); pushHistory(keyword); load(keyword); };
 
   const classMap = Object.fromEntries(classes.map((c) => [c.id, c]));
   const sorted = [...events].sort((a, b) =>
@@ -64,9 +75,35 @@ export default function Home() {
           <span className="badge"><IcoSpark /> Discover live events near you</span>
           <h1>Book tickets to the moments <em>you'll never forget.</em></h1>
           <p className="sub">Concerts, sports and theatre — discover, book and manage it all in one place.</p>
-          <form className="searchbar" onSubmit={(e) => { e.preventDefault(); load(); }}>
-            <input placeholder="Search artists, teams, events…" value={keyword} onChange={(e) => setKeyword(e.target.value)} />
+          <form className="searchbar" onSubmit={submitSearch}>
+            <input
+              placeholder="Search artists, teams, events…"
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+              onFocus={() => setShowHistory(true)}
+              onBlur={() => setTimeout(() => setShowHistory(false), 150)}
+            />
             <button className="btn" type="submit"><IcoSearch /> Search</button>
+
+            {showHistory && history.length > 0 && (
+              <div className="search-history">
+                <div className="sh-head">
+                  <span>Recent searches</span>
+                  <button type="button" onMouseDown={(e) => { e.preventDefault(); saveHistory([]); }}>Clear</button>
+                </div>
+                {history.map((h) => (
+                  <button type="button" key={h} className="sh-item" onMouseDown={(e) => { e.preventDefault(); runSearch(h); }}>
+                    <IcoSearch /> <span style={{ flex: 1 }}>{h}</span>
+                    <span
+                      className="sh-remove"
+                      role="button"
+                      aria-label={`Remove ${h}`}
+                      onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); saveHistory(history.filter((x) => x !== h)); }}
+                    >×</span>
+                  </button>
+                ))}
+              </div>
+            )}
           </form>
         </div>
       </header>
