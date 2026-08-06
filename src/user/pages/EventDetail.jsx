@@ -20,6 +20,7 @@ export default function EventDetail() {
   const [qty, setQty] = useState(1);
   const [msg, setMsg] = useState(null);        // { ok, text }
   const [busy, setBusy] = useState(false);
+  const [confirmBuy, setConfirmBuy] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -55,8 +56,11 @@ export default function EventDetail() {
   const sameVenue = pool.filter((e) => e.venueId === event.venueId && e.id !== event.id).slice(0, 4);
   const sameCat = pool.filter((e) => e.classificationId === event.classificationId && e.id !== event.id).slice(0, 4);
 
+  // The Book button opens a confirmation dialog first (or sends guests to login).
+  const startBuy = () => (user ? setConfirmBuy(true) : nav('/login'));
+
   const book = async () => {
-    if (!user) return nav('/login');
+    setConfirmBuy(false);
     setBusy(true); setMsg(null);
     try {
       const res = await api.book({ eventId: event.id, quantity: qty });
@@ -129,7 +133,7 @@ export default function EventDetail() {
             <strong style={{ fontSize: 20 }}>{money(event.priceMin * qty)}</strong>
           </div>
 
-          <button className="btn" style={{ width: '100%' }} disabled={soldOut || busy} onClick={book}>
+          <button className="btn" style={{ width: '100%' }} disabled={soldOut || busy} onClick={startBuy}>
             {soldOut ? 'Sold out' : busy ? 'Booking…' : user ? 'Book now' : 'Sign in to book'}
           </button>
           <button className={`btn ghost ${saved ? 'fav-active' : ''}`} style={{ width: '100%', marginTop: 10 }} onClick={() => toggle(event.id)}>
@@ -153,6 +157,23 @@ export default function EventDetail() {
         </section>
       )}
     </main>
+
+    {confirmBuy && (
+      <div className="modal-backdrop" onClick={() => setConfirmBuy(false)}>
+        <div className="card modal" style={{ maxWidth: 400, textAlign: 'center' }} onClick={(e) => e.stopPropagation()}>
+          <div style={{ fontSize: 34, marginBottom: 8 }}>🎫</div>
+          <h3 style={{ marginBottom: 8 }}>Confirm your purchase</h3>
+          <p className="muted" style={{ marginBottom: 22 }}>
+            Buy <strong>{qty}</strong> ticket{qty > 1 ? 's' : ''} for <strong>{event.name}</strong> at <strong>{money(event.priceMin * qty)}</strong>?
+          </p>
+          <div className="row" style={{ justifyContent: 'center', gap: 10 }}>
+            <button className="btn ghost" onClick={() => setConfirmBuy(false)} disabled={busy}>Cancel</button>
+            <button className="btn" onClick={book} disabled={busy}>{busy ? 'Booking…' : 'Buy now'}</button>
+          </div>
+        </div>
+      </div>
+    )}
+
     <Footer />
     </>
   );

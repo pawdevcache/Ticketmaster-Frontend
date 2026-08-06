@@ -251,7 +251,7 @@ textarea.field { resize: vertical; font-family: inherit; }
 @media (max-width: 820px) { .chart-grid { grid-template-columns: 1fr; } .barrow { grid-template-columns: 96px 1fr auto; } }
 
 /* E-ticket */
-.eticket { width: 100%; max-width: 380px; overflow: hidden; }
+.eticket { width: 100%; max-width: 380px; overflow: hidden; margin-inline: auto; }
 .eticket-head { background: var(--dark); color: #fff; padding: 22px 24px; }
 .eticket-head h3 { margin: 8px 0 4px; font-size: 20px; }
 .eticket-body { padding: 24px; display: flex; flex-direction: column; gap: 18px; align-items: stretch; }
@@ -300,7 +300,7 @@ textarea.field { resize: vertical; font-family: inherit; }
 .booking-thumb { width: 150px; min-width: 150px; background-size: cover; background-position: center; }
 
 /* Footer */
-.footer { background: var(--dark); color: #94a3b8; margin-top: 80px; padding: 48px 0 32px; }
+.footer { background: var(--dark); color: #94a3b8; margin-top: 48px; padding: 24px 0; }
 .footer .container { display: flex; flex-wrap: wrap; gap: 24px; justify-content: space-between; align-items: center; }
 .footer .logo b { font-size: 20px; }
 .footer a:hover { color: #fff; }
@@ -349,7 +349,7 @@ textarea.field { resize: vertical; font-family: inherit; }
 
   .booking-thumb { width: 100px; min-width: 100px; }
 
-  .footer { padding: 36px 0 28px; margin-top: 56px; }
+  .footer { padding: 20px 0; margin-top: 36px; }
   .footer .container { justify-content: center; text-align: center; }
 
   .modal { padding: 22px; }

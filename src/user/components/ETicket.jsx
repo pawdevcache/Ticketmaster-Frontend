@@ -28,9 +28,11 @@ export default function ETicket({ booking, onDone }) {
           <div><span className="muted">Total</span><strong>{money(booking.total)}</strong></div>
           <div><span className="muted">Ref</span><strong>{booking.id.slice(-8).toUpperCase()}</strong></div>
         </div>
-        <div className="row" style={{ gap: 10, marginTop: 4 }}>
-          <button className="btn ghost" style={{ flex: 1 }} disabled={!booking.event} onClick={() => addToCalendar(booking.event, booking.quantity)}>Add to calendar</button>
-          {onDone && <button className="btn" style={{ flex: 1 }} onClick={onDone}>Done</button>}
+        <div className="row" style={{ gap: 10, marginTop: 4, justifyContent: 'center' }}>
+          <button className="btn ghost sm" disabled={!booking.event} onClick={() => addToCalendar(booking.event, booking.quantity)}>
+            <IcoDate /> Add to calendar
+          </button>
+          {onDone && <button className="btn sm" onClick={onDone}>Done</button>}
         </div>
       </div>
     </div>
