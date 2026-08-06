@@ -24,6 +24,7 @@ export default function Auth() {
   const go = (m) => { setMode(m); setErr(''); setNotice(''); };
 
   const TOO_SHORT = 'Password must be at least 6 characters.';
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const shortPw = form.password.length < 6;
   const needsHint = mode === 'register' || mode === 'reset';
 
@@ -32,15 +33,21 @@ export default function Auth() {
     setErr(''); setNotice('');
 
     if (mode === 'forgot') {
+      const email = form.email.trim();
+      // Must be a valid email, and it must belong to a real account — you can
+      // only reset your own password, not someone else's / a mistyped address.
+      if (!EMAIL_RE.test(email)) { setErr('Enter a valid email address.'); return; }
       setBusy(true);
       try {
-        const res = await api.forgotPassword(form.email);
-        // Dev backends return the token directly; production emails it instead.
-        setForm({ ...form, token: res?.resetToken || '', password: '' });
-        setMode('reset');
-        setNotice(res?.resetToken
-          ? 'Reset code ready below — set your new password.'
-          : 'If that email exists, a reset code was sent. Enter it below.');
+        const res = await api.forgotPassword(email);
+        if (res?.resetToken) {
+          // A token is only issued for a registered address → the email checks out.
+          setForm({ ...form, email, token: res.resetToken, password: '' });
+          setMode('reset');
+          setNotice('We found your account — set a new password below.');
+        } else {
+          setErr('No account found with that email. Please use the email you registered with.');
+        }
       } catch (e) { setErr(e.message); } finally { setBusy(false); }
       return;
     }
@@ -95,7 +102,7 @@ export default function Auth() {
         </h2>
         <p className="center muted" style={{ marginBottom: 20 }}>
           {mode === 'forgot' ? 'Enter your email to get a reset code.'
-            : mode === 'reset' ? 'Enter the code and your new password.'
+            : mode === 'reset' ? `Enter the code and a new password for ${form.email}.`
             : 'Sign in to book and manage tickets.'}
         </p>
 
