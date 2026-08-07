@@ -300,14 +300,14 @@ textarea.field { resize: vertical; font-family: inherit; }
 /* Date-time picker (admin event scheduling) */
 .dtp { position: relative; }
 .dtp-trigger { display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer; text-align: left; }
-.dtp-panel { margin-top: 8px; border: 1px solid var(--border); border-radius: 14px; padding: 12px; background: var(--card); box-shadow: var(--shadow); }
+.dtp-panel { margin-top: 8px; width: 300px; max-width: 100%; border: 1px solid var(--border); border-radius: 14px; padding: 12px; background: var(--card); box-shadow: var(--shadow); }
 .dtp-head { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
 .dtp-head button { width: 32px; height: 32px; border: none; background: var(--bg); border-radius: 9px; cursor: pointer; color: var(--text); font-size: 16px; line-height: 1; }
 .dtp-head button:hover { background: color-mix(in srgb, var(--primary) 14%, var(--card)); color: var(--primary); }
 .dtp-title { flex: 1; text-align: center; font-family: var(--head); font-weight: 700; }
 .dtp-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
 .dtp-dow span { text-align: center; font-size: 12px; color: var(--muted); font-weight: 700; padding: 4px 0; }
-.dtp-day { aspect-ratio: 1; border: none; background: none; border-radius: 9px; cursor: pointer; color: var(--text); font-size: 14px; font-variant-numeric: tabular-nums; }
+.dtp-day { aspect-ratio: 1; border: none; background: none; border-radius: 8px; cursor: pointer; color: var(--text); font-size: 13px; font-variant-numeric: tabular-nums; }
 .dtp-day:hover { background: var(--bg); }
 .dtp-day.today { box-shadow: inset 0 0 0 1.5px var(--primary); color: var(--primary); font-weight: 700; }
 .dtp-day.sel { background: var(--grad); color: #fff; font-weight: 700; }
