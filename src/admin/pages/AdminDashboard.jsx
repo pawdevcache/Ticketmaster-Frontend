@@ -4,6 +4,7 @@ import { api, adminApi } from '../../services/api';
 import { useAdmin } from '../context/AdminContext';
 import ThemeToggle from '../../shared/ThemeToggle';
 import Door from '../components/Door';
+import DateTimePicker from '../components/DateTimePicker';
 // Lazy so the ~450KB QR-scanner library loads only when Check-in is opened.
 const CheckIn = lazy(() => import('../components/CheckIn'));
 import { money, fmtDate, cover } from '../../utils/format';
@@ -98,7 +99,7 @@ export default function AdminDashboard() {
       ],
       fields: [
         { key: 'name', label: 'Event name', type: 'text', required: true, wide: true },
-        { key: 'date', label: 'Date & time', type: 'datetime', required: true },
+        { key: 'date', label: 'Date & time', type: 'datetime', required: true, wide: true },
         { key: 'status', label: 'Status', type: 'select', options: ['onsale', 'offsale', 'cancelled'].map((v) => ({ value: v, label: v })) },
         { key: 'venueId', label: 'Venue', type: 'select', options: venueOpts, required: true },
         { key: 'classificationId', label: 'Category', type: 'select', options: classOpts, required: true },
@@ -365,10 +366,12 @@ function Field({ f, value, onChange }) {
     );
   else if (f.type === 'textarea')
     control = <textarea className="field" rows={3} value={value} onChange={(e) => onChange(e.target.value)} />;
+  else if (f.type === 'datetime')
+    control = <DateTimePicker value={value} onChange={onChange} />;
   else
     control = (
       <input className="field" value={value} placeholder={f.placeholder} required={f.required}
-        type={f.type === 'number' ? 'number' : f.type === 'datetime' ? 'datetime-local' : 'text'}
+        type={f.type === 'number' ? 'number' : 'text'}
         onChange={(e) => onChange(e.target.value)} />
     );
   return <label className={cls}><span className="fld-label">{f.label}</span>{control}</label>;
